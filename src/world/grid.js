@@ -1,5 +1,5 @@
 // Each neighbourhood is laid out on its own rotated grid of plots. Every fourth
-// row/column is left open as a gali (lane), which the ground painter draws and
+// row/column (or `style.lanes`-th) is left open as a gali (lane), which the ground painter draws and
 // the building generator skips, so lanes and buildings always line up.
 import { BUILDING_STYLES } from './layout.js';
 import { mulberry32 } from '../utils/math.js';
@@ -32,7 +32,8 @@ export function* districtCells(d) {
       // wobbly edge so districts don't look like perfect circles
       const edge = d.r * (0.82 + rand() * 0.25);
       if (dist > edge) continue;
-      const lane = mod(i, 4) === 3 || mod(j, 4) === 3;
+      const period = style.lanes ?? 4;
+      const lane = mod(i, period) === period - 1 || mod(j, period) === period - 1;
       yield { x, z, angle: a, size: s, lane, falloff: dist / d.r, rand: rand() };
     }
   }

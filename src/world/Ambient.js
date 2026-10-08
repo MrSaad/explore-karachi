@@ -1,8 +1,10 @@
 // City life: street trees, traffic (driving on the left, as in Pakistan),
 // pedestrians, crows, kites and boats.
 import * as THREE from 'three';
-import { ROADS, n } from './layout.js';
-import { mat } from './materials.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { ROADS, DISTRICTS, PARKS, n } from './layout.js';
+import { districtCells } from './grid.js';
+import { mat, swayMaterial, WIND } from './materials.js';
 import { mulberry32, makePath, samplePath, pick, range } from '../utils/math.js';
 import { buildRickshawModel } from '../entities/Rickshaw.js';
 import { Character, randomOutfit } from '../entities/Character.js';
@@ -11,91 +13,362 @@ import { boat, ship } from './landmarks/helpers.js';
 
 const COASTAL_ROADS = new Set(['sea-view', 'ittehad', 'clifton', 'clifton-2', 'zamzama', 'dha-cross', 'sandspit']);
 
-// ---------------------------------------------------------------------- trees
+// ---------------------------------------------------------------------- trees & street furniture
+const TREE_KINDS = {
+  // neem: the city's everyday shade tree
+  neem: { greens: [0x5e9a46, 0x6aa84f, 0x4f8a3c, 0x7aae55, 0x588f41] },
+  // gulmohar: wide, flat crown that bursts flame-red in early summer
+  gulmohar: { greens: [0xe8542c, 0xd9481f, 0xf06a3a, 0x6f9a52] },
+  // amaltas: cascades of yellow
+  amaltas: { greens: [0xf2c230, 0xe8b923, 0x7aae55] },
+};
+
+function crownGeometry(kind) {
+  const parts = [];
+  if (kind === 'gulmohar') {
+    for (const [x, y, z, r] of [
+      [0, 3.1, 0, 1.6],
+      [1.3, 2.9, 0.3, 1.2],
+      [-1.2, 2.95, -0.4, 1.25],
+      [0.2, 3.3, -1.1, 1.1],
+    ]) {
+      const g = new THREE.IcosahedronGeometry(r, 0);
+      g.scale(1.25, 0.55, 1.25);
+      g.translate(x, y, z);
+      parts.push(g);
+    }
+  } else {
+    for (const [x, y, z, r] of [
+      [0, 3.0, 0, 1.5],
+      [0.8, 3.7, 0.3, 1.05],
+      [-0.7, 3.5, -0.4, 1.1],
+      [0.1, 2.6, 0.9, 0.95],
+    ]) {
+      const g = new THREE.IcosahedronGeometry(r, 0);
+      g.translate(x, y, z);
+      parts.push(g);
+    }
+  }
+  return mergeGeometries(parts.map((g) => g.toNonIndexed()));
+}
+
 function buildTrees(scene, collision, terrain, rand) {
-  const trees = [];
+  const trees = []; // { x, z, s, r, kind }
   const palms = [];
+  const shrubs = [];
+
+  const pickKind = () => {
+    const k = rand();
+    return k < 0.8 ? 'neem' : k < 0.93 ? 'gulmohar' : 'amaltas';
+  };
+  const plant = (list, x, z, s, extra = {}) => {
+    list.push({ x, z, s, r: rand() * Math.PI * 2, ...extra });
+    collision.addCircle(x, z, 0.45, 'tree');
+  };
+  const nearOtherRoad = (road, x, z) =>
+    ROADS.some((r) => r !== road && r.path.some((q) => Math.hypot(q[0] - x, q[1] - z) < r.width / 2 + 1.5));
+
+  // avenues: trees along every road, palms along the coast
   for (const road of ROADS) {
     const palmy = COASTAL_ROADS.has(road.id);
-    const step = palmy ? 11 : 15;
+    const step = palmy ? 9 : 11;
     const path = makePath(road.path);
     for (let s = step / 2; s < path.length; s += step) {
       const p = samplePath(path, s);
       for (const side of [-1, 1]) {
-        if (rand() < 0.3) continue;
+        if (rand() < 0.2) continue;
         const off = road.width / 2 + 2.6;
         const x = p.x + p.dz * side * off,
           z = p.z - p.dx * side * off;
-        if (!terrain.isLand(x, z) || !collision.isFree(x, z, 1.1)) continue;
-        // don't plant in the middle of a crossing road
-        if (ROADS.some((r) => r !== road && r.path.some((q) => Math.hypot(q[0] - x, q[1] - z) < r.width / 2 + 1.5)))
-          continue;
-        (palmy ? palms : trees).push({ x, z, s: 0.85 + rand() * 0.4, r: rand() * Math.PI });
-        collision.addCircle(x, z, 0.45, 'tree');
+        if (!terrain.isLand(x, z) || !collision.isFree(x, z, 1.1) || nearOtherRoad(road, x, z)) continue;
+        if (palmy) plant(palms, x, z, 0.85 + rand() * 0.4);
+        else plant(trees, x, z, 0.85 + rand() * 0.4, { kind: pickKind() });
+        // a low shrub between some of the trees
+        if (rand() < 0.35) {
+          const q = samplePath(path, s + step / 2);
+          const sx = q.x + q.dz * side * off,
+            sz = q.z - q.dx * side * off;
+          if (terrain.isLand(sx, sz) && collision.isFree(sx, sz, 0.8))
+            shrubs.push({ x: sx, z: sz, s: 0.6 + rand() * 0.5, r: rand() * 6 });
+        }
       }
     }
   }
-  // scattered neem trees in neighbourhoods
-  for (let i = 0; i < 700; i++) {
+
+  // trees inside neighbourhoods: in the galis and courtyards
+  for (const d of DISTRICTS) {
+    const chance =
+      { villas: 0.45, bungalow: 0.5, campus: 0.5, apartments: 0.25, midrise: 0.2, huts: 0.3 }[d.style] ?? 0.12;
+    for (const c of districtCells(d)) {
+      if (!c.lane || rand() > chance) continue;
+      const x = c.x + (rand() - 0.5) * 2,
+        z = c.z + (rand() - 0.5) * 2;
+      if (!terrain.isLand(x, z) || terrain.isRoad(x, z) || terrain.isBlocked(x, z) || !collision.isFree(x, z, 1.3))
+        continue;
+      if (d.style === 'huts' || d.id === 'clifton') plant(palms, x, z, 0.8 + rand() * 0.35);
+      else plant(trees, x, z, 0.75 + rand() * 0.45, { kind: pickKind() });
+    }
+  }
+
+  // shady rings around the bigger parks
+  for (const park of PARKS) {
+    if (park.r < 9) continue;
+    const n = Math.floor((Math.PI * 2 * park.r * 0.88) / 5.5);
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + rand() * 0.2;
+      const x = park.at[0] + Math.cos(a) * park.r * 0.88,
+        z = park.at[1] + Math.sin(a) * park.r * 0.88;
+      if (terrain.isLand(x, z) && collision.isFree(x, z, 1.2))
+        plant(trees, x, z, 0.8 + rand() * 0.4, { kind: pickKind() });
+    }
+  }
+
+  // and a scattering everywhere else
+  for (let i = 0; i < 900; i++) {
     const x = range(rand, -330, 330),
       z = range(rand, -300, 120);
-    if (!terrain.isLand(x, z) || terrain.isRoad(x, z) || !collision.isFree(x, z, 1.4)) continue;
-    trees.push({ x, z, s: 0.8 + rand() * 0.5, r: rand() * Math.PI });
-    collision.addCircle(x, z, 0.45, 'tree');
+    if (!terrain.isLand(x, z) || terrain.isRoad(x, z) || terrain.isBlocked(x, z) || !collision.isFree(x, z, 1.4))
+      continue;
+    if (rand() < 0.5) plant(trees, x, z, 0.8 + rand() * 0.5, { kind: pickKind() });
+    else shrubs.push({ x, z, s: 0.6 + rand() * 0.6, r: rand() * 6 });
   }
 
   const dummy = new THREE.Object3D();
   const color = new THREE.Color();
-  const make = (geo, material, list, setup, colorFn) => {
+  const make = (geo, material, list, setup, colorFn, shadow = true) => {
+    if (!list.length) return;
     const m = new THREE.InstancedMesh(geo, material, list.length);
     list.forEach((t, i) => {
+      dummy.rotation.set(0, 0, 0);
       setup(t);
       dummy.updateMatrix();
       m.setMatrixAt(i, dummy.matrix);
       if (colorFn) m.setColorAt(i, color.setHex(colorFn(t)));
     });
-    m.castShadow = true;
+    m.castShadow = shadow;
     m.receiveShadow = true;
     scene.add(m);
   };
-
-  const trunk = new THREE.CylinderGeometry(0.18, 0.28, 2, 6);
-  trunk.translate(0, 1, 0);
-  const crown = new THREE.IcosahedronGeometry(1.6, 0);
-  crown.translate(0, 3, 0);
-  make(trunk, mat(0x7a5636), trees, (t) => {
+  const place = (t, sy = 1) => {
     dummy.position.set(t.x, 0, t.z);
     dummy.rotation.set(0, t.r, 0);
-    dummy.scale.setScalar(t.s);
-  });
-  const greens = [0x5e9a46, 0x6aa84f, 0x4f8a3c, 0x7aae55];
-  make(
-    crown,
-    mat(0xffffff),
-    trees,
-    (t) => {
-      dummy.position.set(t.x, 0, t.z);
-      dummy.rotation.set(0, t.r, 0);
-      dummy.scale.set(t.s, t.s * 0.9, t.s);
-    },
-    (t) => greens[Math.floor(t.r * 10) % greens.length],
-  );
+    dummy.scale.set(t.s, t.s * sy, t.s);
+  };
+
+  const trunk = new THREE.CylinderGeometry(0.16, 0.28, 2.4, 6);
+  trunk.translate(0, 1.2, 0);
+  make(trunk, mat(0x7a5636), trees, (t) => place(t));
+  for (const kind of Object.keys(TREE_KINDS)) {
+    const list = trees.filter((t) => t.kind === kind);
+    const greens = TREE_KINDS[kind].greens;
+    make(
+      crownGeometry(kind),
+      swayMaterial(0xffffff, { amp: 0.06, base: 2 }),
+      list,
+      (t) => place(t),
+      (t) => greens[Math.floor(t.r * 7) % greens.length],
+    );
+  }
 
   const palmTrunk = new THREE.CylinderGeometry(0.14, 0.24, 6, 6);
   palmTrunk.translate(0, 3, 0);
-  const fronds = new THREE.ConeGeometry(2.4, 1.1, 7, 1, true);
+  const fronds = new THREE.ConeGeometry(2.4, 1.1, 7, 2, true);
   fronds.rotateX(Math.PI);
   fronds.translate(0, 6.1, 0);
-  make(palmTrunk, mat(0x8a6a48), palms, (t) => {
-    dummy.position.set(t.x, 0, t.z);
-    dummy.rotation.set(0, t.r, 0.05);
-    dummy.scale.setScalar(t.s);
-  });
-  make(fronds, mat(0x4f9442, { side: THREE.DoubleSide }), palms, (t) => {
-    dummy.position.set(t.x, 0, t.z);
-    dummy.rotation.set(0, t.r, 0.05);
-    dummy.scale.setScalar(t.s);
-  });
+  make(palmTrunk, mat(0x8a6a48), palms, (t) => place(t));
+  make(fronds, swayMaterial(0x4f9442, { amp: 0.07, base: 5.6, side: THREE.DoubleSide }), palms, (t) => place(t));
+
+  const shrubGeo = new THREE.IcosahedronGeometry(0.8, 0);
+  shrubGeo.scale(1.3, 0.75, 1.3);
+  shrubGeo.translate(0, 0.5, 0);
+  const shrubColors = [0x5b8f3f, 0x6aa84f, 0x4f7f36, 0xd6247a, 0x7aae55];
+  make(
+    shrubGeo,
+    swayMaterial(0xffffff, { amp: 0.04, base: 0.4 }),
+    shrubs,
+    (t) => place(t),
+    (t) => shrubColors[Math.floor(t.r * 3) % shrubColors.length],
+    false,
+  );
+}
+
+/** Electricity poles with sagging wires, streetlights, parked bikes and fruit carts. */
+function buildStreetFurniture(scene, collision, terrain, rand) {
+  const poles = [];
+  const lamps = [];
+  const bikes = [];
+  const carts = [];
+  const wirePts = [];
+
+  for (const road of ROADS) {
+    const path = makePath(road.path);
+    if (road.kind === 'highway') {
+      // tall streetlights down both sides
+      for (let s = 6; s < path.length; s += 20) {
+        const p = samplePath(path, s);
+        for (const side of [-1, 1]) {
+          const off = road.width / 2 + 1.2;
+          const x = p.x + p.dz * side * off,
+            z = p.z - p.dx * side * off;
+          if (!terrain.isLand(x, z) || !collision.isFree(x, z, 0.5)) continue;
+          lamps.push({ x, z, yaw: Math.atan2(-p.dz * side, p.dx * side) });
+          collision.addCircle(x, z, 0.25, 'pole');
+        }
+      }
+      continue;
+    }
+    // wooden/concrete electricity poles on one side, wires sagging between them
+    const side = road.id.length % 2 ? 1 : -1;
+    const off = road.width / 2 + 1.5;
+    let prev = null;
+    for (let s = 4; s < path.length; s += 16) {
+      const p = samplePath(path, s);
+      const x = p.x + p.dz * side * off,
+        z = p.z - p.dx * side * off;
+      if (!terrain.isLand(x, z) || !collision.isFree(x, z, 0.5)) {
+        prev = null;
+        continue;
+      }
+      poles.push({ x, z, yaw: Math.atan2(p.dx, p.dz), tf: rand() < 0.15 });
+      collision.addCircle(x, z, 0.25, 'pole');
+      if (prev) {
+        // three wires, each a catenary-ish sag between cross-arm ends
+        for (const w of [-0.9, 0, 0.9]) {
+          const ax = prev.x + prev.cx * w,
+            az = prev.z + prev.cz * w;
+          const bx = x + p.dz * w,
+            bz = z - p.dx * w;
+          const N = 6;
+          for (let i = 0; i < N; i++) {
+            const t0 = i / N,
+              t1 = (i + 1) / N;
+            const sag = (t) => 7.1 - Math.sin(t * Math.PI) * 0.9;
+            wirePts.push(
+              ax + (bx - ax) * t0,
+              sag(t0),
+              az + (bz - az) * t0,
+              ax + (bx - ax) * t1,
+              sag(t1),
+              az + (bz - az) * t1,
+            );
+          }
+        }
+      }
+      prev = { x, z, cx: p.dz, cz: -p.dx }; // cross-arm direction
+    }
+
+    // parked motorbikes and fruit carts along the kerb of busier streets
+    if (road.kind === 'street' || rand() < 0.5) {
+      for (let s = 8; s < path.length; s += 7) {
+        if (rand() > 0.35) continue;
+        const p = samplePath(path, s);
+        const sd = rand() < 0.5 ? 1 : -1;
+        const o = road.width / 2 + 0.7;
+        const x = p.x + p.dz * sd * o,
+          z = p.z - p.dx * sd * o;
+        if (!terrain.isLand(x, z) || !collision.isFree(x, z, 0.8)) continue;
+        if (rand() < 0.8) {
+          bikes.push({
+            x,
+            z,
+            yaw: Math.atan2(p.dx, p.dz) + Math.PI / 2 + (rand() - 0.5) * 0.4,
+            color: pick(rand, [0xb22222, 0x1d1d1f, 0x2f4f7f, 0xb22222]),
+          });
+        } else {
+          carts.push({
+            x,
+            z,
+            yaw: Math.atan2(p.dx, p.dz),
+            color: pick(rand, [0xf4a261, 0xe63946, 0xffd60a, 0x6a994e, 0xff7b00]),
+          });
+          collision.addCircle(x, z, 0.8, 'cart');
+        }
+      }
+    }
+  }
+
+  const dummy = new THREE.Object3D();
+  const color = new THREE.Color();
+  const make = (geo, material, list, setup, shadow = true) => {
+    if (!list.length) return;
+    const m = new THREE.InstancedMesh(geo, material, list.length);
+    list.forEach((t, i) => {
+      dummy.position.set(t.x, 0, t.z);
+      dummy.rotation.set(0, t.yaw, 0);
+      dummy.scale.set(1, 1, 1);
+      if (setup) setup(t);
+      dummy.updateMatrix();
+      m.setMatrixAt(i, dummy.matrix);
+      if (t.color !== undefined) m.setColorAt(i, color.setHex(t.color));
+    });
+    m.castShadow = shadow;
+    m.receiveShadow = true;
+    scene.add(m);
+  };
+  const merged = (parts) => mergeGeometries(parts.map((g) => (g.index ? g.toNonIndexed() : g)));
+  const bx = (w, h, d, x, y, z) => new THREE.BoxGeometry(w, h, d).translate(x, y + h / 2, z);
+  const cy = (rt, rb, h, x, y, z, seg = 6) => new THREE.CylinderGeometry(rt, rb, h, seg).translate(x, y + h / 2, z);
+
+  // electricity poles (+ occasional transformer)
+  make(merged([cy(0.12, 0.18, 7.6, 0, 0, 0), bx(2.2, 0.12, 0.12, 0, 7.0, 0)]), mat(0x8c8579), poles, null);
+  make(
+    merged([bx(0.7, 0.9, 0.6, 0, 4.6, 0.35)]),
+    mat(0x5c6670),
+    poles.filter((p) => p.tf),
+    null,
+  );
+  if (wirePts.length) {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(wirePts, 3));
+    scene.add(
+      new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0x222222, transparent: true, opacity: 0.7 })),
+    );
+  }
+
+  // streetlights with a warm lamp head
+  make(merged([cy(0.1, 0.16, 8.5, 0, 0, 0), bx(0.12, 0.12, 2.2, 0, 8.4, 1.0)]), mat(0x9aa0a6), lamps, null);
+  make(
+    merged([bx(0.5, 0.18, 0.8, 0, 8.25, 2.0)]),
+    mat(0xfff3c4, { emissive: 0xffe08a, emissiveIntensity: 0.6 }),
+    lamps,
+    null,
+    false,
+  );
+
+  // parked motorbikes (frame + wheels)
+  const wheelA = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 8).rotateZ(Math.PI / 2).translate(0, 0.3, 0.62);
+  const wheelB = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 8).rotateZ(Math.PI / 2).translate(0, 0.3, -0.62);
+  make(
+    merged([bx(0.32, 0.45, 1.3, 0, 0.45, 0), bx(0.3, 0.12, 0.6, 0, 0.9, -0.2), bx(0.7, 0.05, 0.05, 0, 1.2, 0.55)]),
+    mat(0xffffff, { roughness: 0.5 }),
+    bikes,
+    null,
+  );
+  make(
+    merged([wheelA, wheelB]),
+    mat(0x1b1b1d),
+    bikes.map((b) => ({ ...b, color: undefined })),
+    null,
+    false,
+  );
+
+  // fruit carts (thela) with a heap of produce
+  make(
+    merged([bx(1.2, 0.12, 2.0, 0, 0.75, 0), bx(0.08, 0.75, 0.08, 0.5, 0, 0.8), bx(0.08, 0.75, 0.08, -0.5, 0, 0.8)]),
+    mat(0x8a5a3b),
+    carts.map((c) => ({ ...c, color: undefined })),
+    null,
+  );
+  const heap = new THREE.IcosahedronGeometry(0.55, 0).scale(1.6, 0.6, 2.4).translate(0, 1.05, 0);
+  make(heap, mat(0xffffff), carts, null);
+  const cartWheel = new THREE.CylinderGeometry(0.38, 0.38, 0.08, 10).rotateZ(Math.PI / 2);
+  make(
+    merged([cartWheel.clone().translate(0.65, 0.38, -0.4), cartWheel.clone().translate(-0.65, 0.38, -0.4)]),
+    mat(0x3d3d3d),
+    carts.map((c) => ({ ...c, color: undefined })),
+    null,
+    false,
+  );
 }
 
 // ---------------------------------------------------------------------- vehicles
@@ -316,6 +589,7 @@ function kite(color) {
 export function buildAmbient(scene, collision, terrain) {
   const rand = mulberry32(2024);
   buildTrees(scene, collision, terrain, rand);
+  buildStreetFurniture(scene, collision, terrain, rand);
   const vehicles = buildTraffic(scene, rand);
 
   // pedestrians recycle around the player
@@ -428,6 +702,7 @@ export function buildAmbient(scene, collision, terrain) {
 
   return {
     update(dt, t, playerPos, audio) {
+      WIND.value = t;
       // traffic
       for (const v of vehicles) {
         const pos = samplePath(v.path, v.s);

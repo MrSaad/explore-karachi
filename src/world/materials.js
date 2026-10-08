@@ -92,3 +92,37 @@ export function makeFacadeMaterial() {
   };
   return m;
 }
+
+/** Shared clock for everything that moves in the breeze. Set `WIND.value = time` each frame. */
+export const WIND = { value: 0 };
+
+/**
+ * Flat-shaded material whose vertices sway in the wind (tree crowns, laundry).
+ * Works with InstancedMesh: each instance gets its own phase from its position.
+ *  - base: local height above which the sway starts (crowns move, trunks don't)
+ *  - hang: true for things hanging *down* from y=0 (laundry): the lower, the more it swings
+ */
+export function swayMaterial(color, { amp = 0.12, base = 0, hang = false, side = THREE.FrontSide } = {}) {
+  const m = new THREE.MeshStandardMaterial({ color, roughness: 0.9, flatShading: true, side });
+  m.onBeforeCompile = (shader) => {
+    shader.uniforms.uWind = WIND;
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nuniform float uWind;')
+      .replace(
+        '#include <begin_vertex>',
+        `#include <begin_vertex>
+      #ifdef USE_INSTANCING
+        vec3 ip = instanceMatrix[3].xyz;
+      #else
+        vec3 ip = vec3(0.0);
+      #endif
+      float lever = ${hang ? 'max(0.0, -position.y)' : `max(0.0, position.y - ${base.toFixed(2)})`};
+      float ph = ip.x * 0.37 + ip.z * 0.23;
+      float gust = 0.75 + 0.25 * sin(uWind * 0.31 + ip.x * 0.01);
+      transformed.x += sin(uWind * ${hang ? '3.1' : '1.3'} + ph) * ${amp.toFixed(3)} * lever * gust;
+      transformed.z += cos(uWind * ${hang ? '2.3' : '1.1'} + ph * 1.3) * ${(amp * 0.6).toFixed(3)} * lever * gust;`,
+      );
+  };
+  m.customProgramCacheKey = () => `sway|${amp}|${base}|${hang}`;
+  return m;
+}
