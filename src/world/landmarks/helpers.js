@@ -12,7 +12,10 @@ export function box(w, h, d, color, x = 0, y = 0, z = 0, opts) {
 }
 
 export function cyl(rt, rb, h, color, x = 0, y = 0, z = 0, seg = 12, opts) {
-  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), typeof color === 'object' ? color : mat(color, opts));
+  const m = new THREE.Mesh(
+    new THREE.CylinderGeometry(rt, rb, h, seg),
+    typeof color === 'object' ? color : mat(color, opts),
+  );
   m.position.set(x, y + h / 2, z);
   return m;
 }
@@ -66,7 +69,10 @@ export function archRow(count, width, height, y, z, color = 0x6b5a48, archW = nu
     const x = -width / 2 + (width / count) * (i + 0.5);
     const rect = new THREE.Mesh(new THREE.PlaneGeometry(aw, height * 0.7), mat(color, { side: THREE.DoubleSide }));
     rect.position.set(x, y + height * 0.35, z);
-    const top = new THREE.Mesh(new THREE.CircleGeometry(aw / 2, 10, 0, Math.PI), mat(color, { side: THREE.DoubleSide }));
+    const top = new THREE.Mesh(
+      new THREE.CircleGeometry(aw / 2, 10, 0, Math.PI),
+      mat(color, { side: THREE.DoubleSide }),
+    );
     top.position.set(x, y + height * 0.7, z);
     g.add(rect, top);
   }
@@ -119,7 +125,13 @@ export function stall(x, z, rot = 0, color = 0xe63946) {
   const g = new THREE.Group();
   g.add(box(2.2, 0.9, 1.2, 0x8a5a3b, 0, 0, 0));
   g.add(box(2.0, 0.15, 1.0, 0xc0c0c0, 0, 0.9, 0));
-  for (const [px, pz] of [[-1, -0.5], [1, -0.5], [-1, 0.5], [1, 0.5]]) g.add(cyl(0.04, 0.04, 2.2, 0x555555, px, 0, pz, 4));
+  for (const [px, pz] of [
+    [-1, -0.5],
+    [1, -0.5],
+    [-1, 0.5],
+    [1, 0.5],
+  ])
+    g.add(cyl(0.04, 0.04, 2.2, 0x555555, px, 0, pz, 4));
   const awn = box(2.5, 0.12, 1.6, color, 0, 2.2, 0.1);
   awn.rotation.x = 0.15;
   g.add(awn);
@@ -146,7 +158,13 @@ export function table(x, z, color = 0xf2f2f2) {
 export function charpai(x, z, rot = 0) {
   const g = new THREE.Group();
   g.add(box(1.0, 0.08, 2.0, 0xd8c39a, 0, 0.45, 0));
-  for (const [px, pz] of [[-0.45, -0.95], [0.45, -0.95], [-0.45, 0.95], [0.45, 0.95]]) g.add(box(0.1, 0.5, 0.1, 0x6b4226, px, 0, pz));
+  for (const [px, pz] of [
+    [-0.45, -0.95],
+    [0.45, -0.95],
+    [-0.45, 0.95],
+    [0.45, 0.95],
+  ])
+    g.add(box(0.1, 0.5, 0.1, 0x6b4226, px, 0, pz));
   g.position.set(x, 0, z);
   g.rotation.y = rot;
   return g;
@@ -168,14 +186,22 @@ export function camel(x, z, rot = 0, saddle = 0xe63946) {
   const sad = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.2, 0.9), mat(saddle));
   sad.position.set(0, 2.75, -0.1);
   g.add(body, hump, neck, head, sad);
-  for (const [px, pz] of [[-0.3, -0.7], [0.3, -0.7], [-0.3, 0.7], [0.3, 0.7]]) {
+  for (const [px, pz] of [
+    [-0.3, -0.7],
+    [0.3, -0.7],
+    [-0.3, 0.7],
+    [0.3, 0.7],
+  ]) {
     const leg = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.5, 0.18), tan);
     leg.position.set(px, 0.75, pz);
     g.add(leg);
   }
   // tassels
   for (let i = 0; i < 5; i++) {
-    const t = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.3, 4), mat([0xffd60a, 0x06d6a0, 0xff006e, 0x3a86ff, 0xfb5607][i]));
+    const t = new THREE.Mesh(
+      new THREE.ConeGeometry(0.07, 0.3, 4),
+      mat([0xffd60a, 0x06d6a0, 0xff006e, 0x3a86ff, 0xfb5607][i]),
+    );
     t.position.set(-0.5, 2.55, -0.5 + i * 0.22);
     t.rotation.x = Math.PI;
     g.add(t);
@@ -217,8 +243,28 @@ export function ship(x, z, rot = 0, hullColor = 0x8b1e1e, len = 34) {
   let k = 0;
   for (let i = 0; i < 6; i++) {
     for (let j = 0; j < 2; j++) {
-      g.add(box(len * 0.1, 1.3, len * 0.07, colors[k++ % colors.length], -len * 0.2 + i * len * 0.11, 1.7 + j * 1.3, -len * 0.04));
-      g.add(box(len * 0.1, 1.3, len * 0.07, colors[k++ % colors.length], -len * 0.2 + i * len * 0.11, 1.7 + j * 1.3, len * 0.04));
+      g.add(
+        box(
+          len * 0.1,
+          1.3,
+          len * 0.07,
+          colors[k++ % colors.length],
+          -len * 0.2 + i * len * 0.11,
+          1.7 + j * 1.3,
+          -len * 0.04,
+        ),
+      );
+      g.add(
+        box(
+          len * 0.1,
+          1.3,
+          len * 0.07,
+          colors[k++ % colors.length],
+          -len * 0.2 + i * len * 0.11,
+          1.7 + j * 1.3,
+          len * 0.04,
+        ),
+      );
     }
   }
   g.position.set(x, 0, z);
@@ -233,11 +279,17 @@ export function flagPole(x, z, h = 8, pak = true) {
   const fl = new THREE.Group();
   const white = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 1.4), mat(0xffffff, { side: THREE.DoubleSide }));
   white.position.x = 0.25;
-  const green = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.4), mat(pak ? 0x0b6e3b : 0xe63946, { side: THREE.DoubleSide }));
+  const green = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.5, 1.4),
+    mat(pak ? 0x0b6e3b : 0xe63946, { side: THREE.DoubleSide }),
+  );
   green.position.x = 1.25;
   fl.add(white, green);
   if (pak) {
-    const moon = new THREE.Mesh(new THREE.RingGeometry(0.22, 0.32, 12, 1, 0.6, Math.PI * 1.6), mat(0xffffff, { side: THREE.DoubleSide }));
+    const moon = new THREE.Mesh(
+      new THREE.RingGeometry(0.22, 0.32, 12, 1, 0.6, Math.PI * 1.6),
+      mat(0xffffff, { side: THREE.DoubleSide }),
+    );
     moon.position.set(1.25, 0, 0.01);
     fl.add(moon);
   }

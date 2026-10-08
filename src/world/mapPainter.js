@@ -7,15 +7,37 @@ import { tracePoly, traceLine } from './terrain.js';
 import { mulberry32 } from '../utils/math.js';
 
 const GROUND_TINT = {
-  heritage: '#cdb58a', dense: '#cbb48f', colonial: '#d2bb90', towers: '#c4bcae', bungalow: '#c9c69a',
-  apartments: '#d3c3a0', villas: '#ddd0b0', midrise: '#cfbd99', campus: '#bfc48f', industrial: '#b9b2a2',
-  informal: '#c6ab84', port: '#b8b2a6', huts: '#e3d2a8', none: '#cfc6b2',
+  heritage: '#cdb58a',
+  dense: '#cbb48f',
+  colonial: '#d2bb90',
+  towers: '#c4bcae',
+  bungalow: '#c9c69a',
+  apartments: '#d3c3a0',
+  villas: '#ddd0b0',
+  midrise: '#cfbd99',
+  campus: '#bfc48f',
+  industrial: '#b9b2a2',
+  informal: '#c6ab84',
+  port: '#b8b2a6',
+  huts: '#e3d2a8',
+  none: '#cfc6b2',
 };
 
 const MAP_TINT = {
-  heritage: '#ecd6ad', dense: '#eedcbc', colonial: '#efdcb6', towers: '#dfe2e6', bungalow: '#e3ecc8',
-  apartments: '#f0e2c8', villas: '#f5ecd8', midrise: '#eedfc4', campus: '#dcebc4', industrial: '#dcd9d2',
-  informal: '#e9d4b4', port: '#d9dcdf', huts: '#f6ead0', none: '#e4e1da',
+  heritage: '#ecd6ad',
+  dense: '#eedcbc',
+  colonial: '#efdcb6',
+  towers: '#dfe2e6',
+  bungalow: '#e3ecc8',
+  apartments: '#f0e2c8',
+  villas: '#f5ecd8',
+  midrise: '#eedfc4',
+  campus: '#dcebc4',
+  industrial: '#dcd9d2',
+  informal: '#e9d4b4',
+  port: '#d9dcdf',
+  huts: '#f6ead0',
+  none: '#e4e1da',
 };
 
 export function worldCanvas(scale) {
@@ -195,7 +217,13 @@ export function getPaintedCanvas(mode, scale) {
   if (!cache.has(key)) {
     const { canvas, ctx } = worldCanvas(scale);
     paintMap(ctx, mode);
-    cache.set(key, canvas);
+    // Paint on a CPU canvas (fast for many small shapes), then copy once to a
+    // regular canvas so per-frame drawImage calls (minimap) stay on the GPU.
+    const display = document.createElement('canvas');
+    display.width = canvas.width;
+    display.height = canvas.height;
+    display.getContext('2d').drawImage(canvas, 0, 0);
+    cache.set(key, display);
   }
   return cache.get(key);
 }

@@ -104,8 +104,13 @@ export class Places extends EventTarget {
       }
       // project anchor to screen
       this._v.copy(e.anchor).project(this.camera);
-      const x = (this._v.x * 0.5 + 0.5) * width;
-      const y = (-this._v.y * 0.5 + 0.5) * height;
+      let x = (this._v.x * 0.5 + 0.5) * width;
+      let y = (-this._v.y * 0.5 + 0.5) * height;
+      if (near) {
+        // always keep the clickable bubble on screen (big landmarks can be off-frame)
+        x = Math.max(130, Math.min(width - 130, x));
+        y = Math.max(150, Math.min(height - 80, y));
+      }
       const onScreen = x > -100 && x < width + 100 && y > -100 && y < height + 100;
       if (!onScreen) {
         if (e.state !== 'off') {

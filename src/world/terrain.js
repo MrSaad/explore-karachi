@@ -155,7 +155,13 @@ class Terrain {
 
   /** Is a rectangle completely buildable? Samples corners + centre. */
   canBuild(x, z, hw, hd) {
-    const pts = [[x, z], [x - hw, z - hd], [x + hw, z - hd], [x - hw, z + hd], [x + hw, z + hd]];
+    const pts = [
+      [x, z],
+      [x - hw, z - hd],
+      [x + hw, z - hd],
+      [x - hw, z + hd],
+      [x + hw, z + hd],
+    ];
     for (const [px, pz] of pts) {
       if (!this.isLand(px, pz) || this.isRoad(px, pz) || this.isBlocked(px, pz)) return false;
     }
@@ -169,7 +175,8 @@ class Terrain {
       const steps = Math.ceil((Math.PI * 2 * r) / 2);
       for (let i = 0; i < steps; i++) {
         const a = (i / steps) * Math.PI * 2;
-        const px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r;
+        const px = x + Math.cos(a) * r,
+          pz = z + Math.sin(a) * r;
         if (this.isLand(px, pz)) return [px, pz];
       }
     }

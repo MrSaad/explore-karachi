@@ -44,7 +44,7 @@ export class Passport extends EventTarget {
                     return `<div class="stamp ${got ? 'got' : 'locked'}" data-id="${p.id}" role="button" tabindex="0">
                       <div class="seal" style="background:${g.cat.color}">${got ? g.cat.icon : '?'}</div>
                       <strong>${got ? esc(p.name) : esc(p.name)}</strong>
-                      ${got ? `<div class="urdu">${esc(p.urdu)}</div>` : `<small style="color:var(--ink-soft)">Find it in ${esc(p.area)}</small>`}
+                      ${got ? `<div class="urdu">${esc(p.urdu)}</div>` : `<small style="color:var(--ink-soft)">📍 ${esc(p.area)}</small>`}
                       <button class="travel" type="button" data-travel="${p.id}">${got ? 'Read again' : 'Show on map'}</button>
                     </div>`;
                   })

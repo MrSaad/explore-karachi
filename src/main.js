@@ -10,7 +10,7 @@ import { InfoCard } from './ui/InfoCard.js';
 import { MapView } from './ui/MapView.js';
 import { Passport } from './ui/Passport.js';
 import { Toasts, Help, Fader } from './ui/Overlays.js';
-import { DISTRICTS, BUILDING_STYLES } from './world/layout.js';
+import { DISTRICTS, AREAS, BUILDING_STYLES } from './world/layout.js';
 
 const ui = document.getElementById('ui');
 const save = new Save();
@@ -32,7 +32,7 @@ try {
 }
 const { places, categories } = data;
 
-const steps = [0.2, 0.4, 0.6, 0.8];
+const steps = [0.2, 0.35, 0.5, 0.65, 0.8];
 let stepIdx = 0;
 const onProgress = (label) => start.progress(label, steps[Math.min(stepIdx++, steps.length - 1)]);
 await game.buildWorld(onProgress);
@@ -106,7 +106,14 @@ placeSys.addEventListener('discover', (e) => {
     `<span class="seal" style="background:${cat.color}">${cat.icon}</span><div>Stamp collected: ${place.name}<small>${placeSys.count} of ${placeSys.total} · ${cat.label}</small></div>`,
   );
   if (placeSys.count === placeSys.total) {
-    setTimeout(() => toasts.show('🎉 <div>Shabash! Every stamp collected.<small>You have seen all of our miniature Karachi.</small></div>', 6000), 1200);
+    setTimeout(
+      () =>
+        toasts.show(
+          '🎉 <div>Shabash! Every stamp collected.<small>You have seen all of our miniature Karachi.</small></div>',
+          6000,
+        ),
+      1200,
+    );
   }
 });
 placeSys.addEventListener('open', (e) => {
@@ -120,7 +127,11 @@ const openMap = (highlight = null) => {
   map.open({
     entries: game.landmarks.list,
     discovered: placeSys.discovered,
-    player: { x: player.position.x, z: player.position.z, heading: player.mode === 'drive' ? player.rickshaw.heading : player.heading },
+    player: {
+      x: player.position.x,
+      z: player.position.z,
+      heading: player.mode === 'drive' ? player.rickshaw.heading : player.heading,
+    },
     highlight,
   });
 };
@@ -157,7 +168,7 @@ async function travelTo(x, z, place) {
   const r = player.mode === 'drive' ? player.rickshaw.radius : player.radius;
   const land = game.terrain.nearestLand(x, z, 18);
   if (!land) {
-    toasts.show('🌊 <div>That\'s the Arabian Sea!<small>Pick a spot on land to travel to.</small></div>');
+    toasts.show("🌊 <div>That's the Arabian Sea!<small>Pick a spot on land to travel to.</small></div>");
     return;
   }
   traveling = true;
@@ -182,10 +193,23 @@ map.addEventListener('travel', (e) => travelTo(e.detail.x, e.detail.z, e.detail.
 
 // ---------------------------------------------------------------- helpers
 function areaAt(x, z) {
-  let best = null, bestK = 1.05;
+  let best = null,
+    bestK = 1;
+  for (const a of AREAS) {
+    const k = Math.hypot(x - a.center[0], z - a.center[1]) / a.r;
+    if (k < bestK) {
+      bestK = k;
+      best = a;
+    }
+  }
+  if (best) return best;
+  bestK = 1.25;
   for (const d of DISTRICTS) {
     const k = Math.hypot(x - d.center[0], z - d.center[1]) / d.r;
-    if (k < bestK) { bestK = k; best = d; }
+    if (k < bestK) {
+      bestK = k;
+      best = d;
+    }
   }
   return best;
 }
@@ -204,7 +228,12 @@ function nearSeaAmount(x, z) {
 function persist() {
   const p = player.position;
   save.set({
-    player: { x: p.x, z: p.z, heading: player.mode === 'drive' ? player.rickshaw.heading : player.heading, mode: player.mode },
+    player: {
+      x: p.x,
+      z: p.z,
+      heading: player.mode === 'drive' ? player.rickshaw.heading : player.heading,
+      mode: player.mode,
+    },
     rickshaw: { x: player.rickshaw.position.x, z: player.rickshaw.position.z, heading: player.rickshaw.heading },
   });
 }
@@ -212,6 +241,7 @@ window.addEventListener('beforeunload', persist);
 
 // ---------------------------------------------------------------- per-frame
 let saveTimer = 0;
+let miniTimer = 0;
 let soundTimer = 0;
 let nearSea = 0;
 let density = 0;
@@ -240,7 +270,8 @@ game.start((dt) => {
     if (input.wasPressed('f')) {
       if (player.mode === 'walk') {
         if (player.enter()) audio.click();
-        else if (player.distanceToRickshaw() > 3.6) toasts.show('🛺 <div>Your rickshaw is too far away<small>Press R to call it over.</small></div>', 2500);
+        else if (player.distanceToRickshaw() > 4.5)
+          toasts.show('🛺 <div>Your rickshaw is too far away<small>Press R to call it over.</small></div>', 2500);
       } else if (!player.exit()) {
         toasts.show('🛑 <div>Slow down first!</div>', 1500);
       }
@@ -261,6 +292,7 @@ game.start((dt) => {
   const res = player.update(dt, input, basis);
   if (res.stepped) audio.step();
   if (res.hit) audio.bump();
+  game.ambient.update(dt, game.time, player.position, audio);
   game.iso.target.copy(player.position);
   game.iso.extraZoom = player.mode === 'drive' ? 1.4 : 1;
 
@@ -269,15 +301,19 @@ game.start((dt) => {
   placeSys.update(p, game.container.clientWidth, game.container.clientHeight);
   const area = areaAt(p.x, p.z);
   hud.setArea(area ? area.name : 'Karachi', area ? area.urdu : 'کراچی');
-  hud.drawMinimap({
-    x: p.x,
-    z: p.z,
-    heading: player.mode === 'drive' ? player.rickshaw.heading : player.heading,
-    rickshaw: player.rickshaw.position,
-    driving: player.mode === 'drive',
-    entries: game.landmarks.list,
-    discovered: placeSys.discovered,
-  });
+  miniTimer -= dt;
+  if (miniTimer <= 0) {
+    miniTimer = 1 / 30;
+    hud.drawMinimap({
+      x: p.x,
+      z: p.z,
+      heading: player.mode === 'drive' ? player.rickshaw.heading : player.heading,
+      rickshaw: player.rickshaw.position,
+      driving: player.mode === 'drive',
+      entries: game.landmarks.list,
+      discovered: placeSys.discovered,
+    });
+  }
 
   const tips = [];
   if (placeSys.nearest) tips.push({ keys: ['Space'], text: `Read about ${placeSys.nearest.place.name}` });
@@ -294,7 +330,7 @@ game.start((dt) => {
   if (soundTimer <= 0) {
     soundTimer = 0.4;
     nearSea = nearSeaAmount(p.x, p.z);
-    const style = area ? BUILDING_STYLES[area.style] : null;
+    const style = area?.style ? BUILDING_STYLES[area.style] : null;
     density = style ? Math.min(1, style.density * (area.style === 'villas' || area.style === 'huts' ? 0.5 : 1)) : 0.2;
   }
   audio.update(dt, {
@@ -316,5 +352,8 @@ if (!save.data.seenHelp) {
   save.set({ seenHelp: true });
 }
 setTimeout(() => {
-  toasts.show('👋 <div>Khush aamdeed! Welcome to Karachi<small>Empress Market is just nearby. Walk up to it and press Space.</small></div>', 5000);
+  toasts.show(
+    '👋 <div>Khush aamdeed! Welcome to Karachi<small>Empress Market is just nearby. Walk up to it and press Space.</small></div>',
+    5000,
+  );
 }, 600);

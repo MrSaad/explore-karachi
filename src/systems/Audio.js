@@ -113,7 +113,8 @@ export class AudioSystem {
     this.nextHorn -= dt;
     if (this.nextHorn <= 0) {
       this.nextHorn = 3 + Math.random() * 7 * (1.2 - s.density);
-      if (s.density > 0.2) this.horn(0.05 + Math.random() * 0.06, 300 + Math.random() * 250, 0.12 + Math.random() * 0.2);
+      if (s.density > 0.2)
+        this.horn(0.05 + Math.random() * 0.06, 300 + Math.random() * 250, 0.12 + Math.random() * 0.2);
     }
   }
 

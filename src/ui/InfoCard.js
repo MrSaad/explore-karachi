@@ -36,12 +36,14 @@ export class InfoCard extends EventTarget {
     this.el.querySelector('.close-btn').addEventListener('click', () => this.close());
     this.el.querySelector('.scroll').scrollTop = 0;
     requestAnimationFrame(() => this.el.classList.add('open'));
+    document.body.classList.add('card-open');
     this.isOpen = true;
   }
 
   close() {
     if (!this.isOpen) return;
     this.el.classList.remove('open');
+    document.body.classList.remove('card-open');
     this.isOpen = false;
     this.current = null;
     this.dispatchEvent(new Event('close'));

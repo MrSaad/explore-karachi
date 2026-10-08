@@ -41,7 +41,12 @@ function clockFaces(size, y, color = 0xfdf6e3) {
 
 function pinnacles(w, y, h, color) {
   const g = new THREE.Group();
-  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+  for (const [x, z] of [
+    [-1, -1],
+    [1, -1],
+    [-1, 1],
+    [1, 1],
+  ]) {
     g.add(cyl(0.25, 0.3, h * 0.5, color, (x * w) / 2, y, (z * w) / 2, 6));
     g.add(cone(0.35, h * 0.6, color, (x * w) / 2, y + h * 0.5, (z * w) / 2, 6));
   }
@@ -144,7 +149,12 @@ export function empressMarket() {
   g.add(box(20, 7, 4, stone, 0, 0, -8));
   g.add(box(4, 7, 12, stone, 8, 0, 0));
   g.add(box(4, 7, 12, stone, -8, 0, 0));
-  for (const [x, z, w, d] of [[0, 8, 20, 4], [0, -8, 20, 4], [8, 0, 4, 12], [-8, 0, 4, 12]]) {
+  for (const [x, z, w, d] of [
+    [0, 8, 20, 4],
+    [0, -8, 20, 4],
+    [8, 0, 4, 12],
+    [-8, 0, 4, 12],
+  ]) {
     g.add(box(w + 0.4, 0.5, d + 0.4, SANDSTONE_DARK, x, 7, z));
     g.add(gableRoof(w, d, 2, 0x8d5b45, 7.4).translateX(x).translateZ(z));
   }
@@ -158,7 +168,8 @@ export function empressMarket() {
   // Spice sacks and stalls out front
   const spices = [0xc1121f, 0xf4a261, 0xe9c46a, 0x6a994e, 0x9c6644, 0xffb703];
   for (let i = 0; i < 12; i++) {
-    const x = -9 + (i % 6) * 3.4, z = 14 + Math.floor(i / 6) * 1.8;
+    const x = -9 + (i % 6) * 3.4,
+      z = 14 + Math.floor(i / 6) * 1.8;
     g.add(cyl(0.45, 0.55, 0.8, 0xe8dcc0, x, 0, z, 8));
     g.add(cone(0.42, 0.4, spices[i % spices.length], x, 0.8, z, 8));
   }
@@ -237,8 +248,19 @@ export function mohatta() {
   g.add(d);
   g.add(cyl(0.12, 0.2, 1.2, 0xd4af37, 0, 16.6, 0, 6));
   // corner chhatris
-  for (const [x, z] of [[-7, -4], [7, -4], [-7, 4], [7, 4]]) {
-    for (const [px, pz] of [[-0.8, -0.8], [0.8, -0.8], [-0.8, 0.8], [0.8, 0.8]]) g.add(cyl(0.12, 0.12, 2, yellow, x + px, 7.2, z + pz, 5));
+  for (const [x, z] of [
+    [-7, -4],
+    [7, -4],
+    [-7, 4],
+    [7, 4],
+  ]) {
+    for (const [px, pz] of [
+      [-0.8, -0.8],
+      [0.8, -0.8],
+      [-0.8, 0.8],
+      [0.8, 0.8],
+    ])
+      g.add(cyl(0.12, 0.12, 2, yellow, x + px, 7.2, z + pz, 5));
     const c = dome(1.25, pink, 'onion', 10);
     c.position.set(x, 9.2, z);
     g.add(c);
@@ -275,7 +297,10 @@ export function kmc() {
   }
   return {
     group: g,
-    colliders: [{ type: 'box', x: 0, z: 0, hw: 10.2, hd: 5.2 }, { type: 'box', x: 0, z: 2.5, hw: 2.6, hd: 2.6 }],
+    colliders: [
+      { type: 'box', x: 0, z: 0, hw: 10.2, hd: 5.2 },
+      { type: 'box', x: 0, z: 2.5, hw: 2.6, hd: 2.6 },
+    ],
     reserve: 13,
     iconY: 24,
   };
@@ -286,7 +311,8 @@ export function chaukhandi({ rand }) {
   const stone = [0xd7b46a, 0xcfa95c, 0xdcbc78];
   const colliders = [];
   for (let i = 0; i < 26; i++) {
-    const x = (rand() - 0.5) * 26, z = (rand() - 0.5) * 22;
+    const x = (rand() - 0.5) * 26,
+      z = (rand() - 0.5) * 22;
     if (colliders.some((c) => Math.hypot(c.x - x, c.z - z) < 3)) continue;
     const levels = 3 + Math.floor(rand() * 4);
     const rot = (rand() - 0.5) * 0.2;
@@ -305,7 +331,13 @@ export function chaukhandi({ rand }) {
     colliders.push({ type: 'circle', x, z, r: 1.3 });
   }
   // one canopy tomb (chhatri) on pillars
-  for (const [px, pz] of [[-1.6, -1.6], [1.6, -1.6], [-1.6, 1.6], [1.6, 1.6]]) g.add(cyl(0.22, 0.22, 3.5, 0xcfa95c, 15 + px, 0, pz, 6));
+  for (const [px, pz] of [
+    [-1.6, -1.6],
+    [1.6, -1.6],
+    [-1.6, 1.6],
+    [1.6, 1.6],
+  ])
+    g.add(cyl(0.22, 0.22, 3.5, 0xcfa95c, 15 + px, 0, pz, 6));
   g.add(box(4, 0.4, 4, 0xcfa95c, 15, 3.5, 0));
   const d = dome(2, 0xd7b46a, 'half', 8);
   d.position.set(15, 3.9, 0);

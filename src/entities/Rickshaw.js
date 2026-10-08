@@ -35,19 +35,36 @@ export function buildRickshawModel({ body = 0x1f9d55, art = '#1f9d55', seed = 3,
   g.add(stripe);
 
   // headlight + indicator lights
-  const head = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.08, 10), mat(0xfff6c9, { emissive: 0xfff2a8, emissiveIntensity: 0.6 }));
+  const head = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.11, 0.11, 0.08, 10),
+    mat(0xfff6c9, { emissive: 0xfff2a8, emissiveIntensity: 0.6 }),
+  );
   head.rotation.x = Math.PI / 2;
   head.position.set(0, 1.08, 1.12);
   g.add(head);
 
   // windscreen
-  const glass = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.55), new THREE.MeshStandardMaterial({ color: 0xbfe3f2, transparent: true, opacity: 0.35, roughness: 0.1, side: THREE.DoubleSide }));
+  const glass = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.0, 0.55),
+    new THREE.MeshStandardMaterial({
+      color: 0xbfe3f2,
+      transparent: true,
+      opacity: 0.35,
+      roughness: 0.1,
+      side: THREE.DoubleSide,
+    }),
+  );
   glass.position.set(0, 1.5, 0.72);
   glass.rotation.x = -0.18;
   g.add(glass);
 
   // canopy pillars + roof
-  for (const [x, z] of [[-0.58, 0.68], [0.58, 0.68], [-0.6, -1.15], [0.6, -1.15]]) {
+  for (const [x, z] of [
+    [-0.58, 0.68],
+    [0.58, 0.68],
+    [-0.6, -1.15],
+    [0.6, -1.15],
+  ]) {
     const p = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.95, 5), chrome);
     p.position.set(x, 1.48, z);
     g.add(p);
@@ -55,7 +72,10 @@ export function buildRickshawModel({ body = 0x1f9d55, art = '#1f9d55', seed = 3,
   const roof = new THREE.Mesh(new THREE.BoxGeometry(1.34, 0.1, 2.05), black);
   roof.position.set(0, 1.98, -0.24);
   g.add(roof);
-  const roofCurve = new THREE.Mesh(new THREE.CylinderGeometry(0.67, 0.67, 2.05, 10, 1, false, -Math.PI / 2, Math.PI), black);
+  const roofCurve = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.67, 0.67, 2.05, 10, 1, false, -Math.PI / 2, Math.PI),
+    black,
+  );
   roofCurve.rotation.x = Math.PI / 2;
   roofCurve.scale.set(1, 1, 0.22);
   roofCurve.position.set(0, 2.02, -0.24);
@@ -91,7 +111,11 @@ export function buildRickshawModel({ body = 0x1f9d55, art = '#1f9d55', seed = 3,
   const hubGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.18, 8);
   hubGeo.rotateZ(Math.PI / 2);
   const wheels = [];
-  for (const [x, z] of [[0, 0.95], [-0.62, -0.75], [0.62, -0.75]]) {
+  for (const [x, z] of [
+    [0, 0.95],
+    [-0.62, -0.75],
+    [0.62, -0.75],
+  ]) {
     const w = new THREE.Group();
     w.add(new THREE.Mesh(wheelGeo, black), new THREE.Mesh(hubGeo, chrome));
     w.position.set(x, 0.26, z);
@@ -103,7 +127,10 @@ export function buildRickshawModel({ body = 0x1f9d55, art = '#1f9d55', seed = 3,
   mudguard.position.set(0, 0.3, 0.95);
   g.add(mudguard);
 
-  if (shadows) g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  if (shadows)
+    g.traverse((o) => {
+      if (o.isMesh) o.castShadow = true;
+    });
   g.userData.wheels = wheels;
   return g;
 }
@@ -119,7 +146,7 @@ export class Rickshaw {
     this.steer = 0;
     this.maxSpeed = 24;
     this.boostSpeed = 32;
-    this.radius = 1.35;
+    this.radius = 1.8;
     this.t = 0;
     this.occupied = false;
   }
@@ -147,7 +174,7 @@ export class Rickshaw {
 
     this.steer += (steerInput - this.steer) * Math.min(1, dt * 8);
     const grip = clamp(Math.abs(this.speed) / 6, 0, 1) * (1 - clamp((Math.abs(this.speed) - 20) / 30, 0, 0.35));
-    this.heading -= this.steer * 2.3 * grip * Math.sign(this.speed || 1) * dt;
+    this.heading -= this.steer * 1.9 * grip * Math.sign(this.speed || 1) * dt;
 
     const dx = Math.sin(this.heading) * this.speed * dt;
     const dz = Math.cos(this.heading) * this.speed * dt;
@@ -171,7 +198,7 @@ export class Rickshaw {
   /** Visual life: wheel spin, body roll, idle shudder. */
   animate(dt) {
     this.t += dt;
-    for (const w of this.wheels) w.rotation.x += (this.speed * dt) / 0.26;
+    for (const w of this.wheels) w.rotation.x += (this.speed * dt) / (0.26 * this.root.scale.x);
     this.wheels[0].rotation.y = this.steer * 0.5;
     const roll = -this.steer * clamp(this.speed / this.maxSpeed, -1, 1) * 0.08;
     this.chassis.rotation.z += (roll - this.chassis.rotation.z) * Math.min(1, dt * 6);

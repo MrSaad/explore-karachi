@@ -34,7 +34,8 @@ export class CollisionWorld {
 
   /** Rotated rectangle: centre, half-width (local x), half-depth (local z), rotation about Y. */
   addBox(x, z, hw, hd, angle = 0, tag = null) {
-    const c = Math.cos(angle), s = Math.sin(angle);
+    const c = Math.cos(angle),
+      s = Math.sin(angle);
     const item = { type: 'box', x, z, hw, hd, c, s, tag };
     const ext = Math.abs(hw * c) + Math.abs(hd * s);
     const ezt = Math.abs(hw * s) + Math.abs(hd * c);
@@ -66,7 +67,8 @@ export class CollisionWorld {
       let moved = false;
       for (const it of this.nearby(x, z, r + 2)) {
         if (it.type === 'circle') {
-          const dx = x - it.x, dz = z - it.z;
+          const dx = x - it.x,
+            dz = z - it.z;
           const d = Math.hypot(dx, dz);
           const min = r + it.r;
           if (d < min && d > 1e-5) {
@@ -76,25 +78,37 @@ export class CollisionWorld {
           }
         } else {
           // into box-local space (rotation by -angle)
-          const dx = x - it.x, dz = z - it.z;
+          const dx = x - it.x,
+            dz = z - it.z;
           const lx = dx * it.c + dz * it.s;
           const lz = -dx * it.s + dz * it.c;
           const qx = Math.max(-it.hw, Math.min(it.hw, lx));
           const qz = Math.max(-it.hd, Math.min(it.hd, lz));
-          let ox = lx - qx, oz = lz - qz;
+          let ox = lx - qx,
+            oz = lz - qz;
           let d = Math.hypot(ox, oz);
           if (d < r) {
             let nx, nz;
             if (d > 1e-5) {
-              nx = ox / d; nz = oz / d;
+              nx = ox / d;
+              nz = oz / d;
             } else {
               // centre inside the box: push out along the shallowest axis
-              const px = it.hw - Math.abs(lx), pz = it.hd - Math.abs(lz);
-              if (px < pz) { nx = Math.sign(lx) || 1; nz = 0; d = -px; }
-              else { nx = 0; nz = Math.sign(lz) || 1; d = -pz; }
+              const px = it.hw - Math.abs(lx),
+                pz = it.hd - Math.abs(lz);
+              if (px < pz) {
+                nx = Math.sign(lx) || 1;
+                nz = 0;
+                d = -px;
+              } else {
+                nx = 0;
+                nz = Math.sign(lz) || 1;
+                d = -pz;
+              }
             }
             const push = r - d;
-            const nlx = lx + nx * push, nlz = lz + nz * push;
+            const nlx = lx + nx * push,
+              nlz = lz + nz * push;
             x = it.x + nlx * it.c - nlz * it.s;
             z = it.z + nlx * it.s + nlz * it.c;
             moved = hit = true;
@@ -117,7 +131,8 @@ export class CollisionWorld {
    * Move from (x0,z0) by (dx,dz) with sliding against obstacles and coastline.
    */
   move(x0, z0, dx, dz, r) {
-    let x = x0 + dx, z = z0 + dz;
+    let x = x0 + dx,
+      z = z0 + dz;
     const t = this.terrain;
     if (!t.isLand(x, z)) {
       // slide along the coast by trying each axis on its own
@@ -140,7 +155,8 @@ export class CollisionWorld {
       const steps = Math.ceil((Math.PI * 2 * rad) / 2);
       for (let i = 0; i < steps; i++) {
         const a = (i / steps) * Math.PI * 2;
-        const px = x + Math.cos(a) * rad, pz = z + Math.sin(a) * rad;
+        const px = x + Math.cos(a) * rad,
+          pz = z + Math.sin(a) * rad;
         if (this.isFree(px, pz, r)) return [px, pz];
       }
     }

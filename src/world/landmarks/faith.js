@@ -91,7 +91,8 @@ export function tooba() {
   g.add(d);
   g.add(cyl(0.3, 0.5, 1.2, 0xd4af37, 0, 11.6, 0, 8));
   // Single slender minaret
-  const mx = 17, mz = 9;
+  const mx = 17,
+    mz = 9;
   g.add(cyl(1.1, 1.3, 30, marble, mx, 0.5, mz, 12));
   for (const y of [12, 22, 29]) g.add(cyl(1.7, 1.5, 0.6, marble, mx, y, mz, 12));
   g.add(cyl(0.9, 0.9, 3, marble, mx, 30.5, mz, 12));
@@ -129,7 +130,12 @@ export function shrine() {
   g.add(d);
   g.add(cyl(0.08, 0.15, 1.4, 0xd4af37, 0, 12.3, 0, 6));
   // Corner mini-minarets and green flags
-  for (const [x, z] of [[-3, -3], [3, -3], [-3, 3], [3, 3]]) {
+  for (const [x, z] of [
+    [-3, -3],
+    [3, -3],
+    [-3, 3],
+    [3, 3],
+  ]) {
     g.add(cyl(0.3, 0.3, 2.2, white, x, 7.7, z, 8));
     g.add(cone(0.4, 0.9, 0x1f8a4c, x, 9.9, z, 8));
   }

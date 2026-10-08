@@ -8,7 +8,7 @@ const DIST = 400;
 
 export class IsoCamera {
   constructor(aspect) {
-    this.viewHeight = 46; // world units visible vertically at zoom 1
+    this.viewHeight = 38; // world units visible vertically at zoom 1
     this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 2000);
     this.yaw = Math.PI / 4; // looking from the south-east toward the north-west
     this.targetYaw = this.yaw;
@@ -51,7 +51,8 @@ export class IsoCamera {
 
   /** Unit vectors for "screen up" and "screen right" on the ground plane. */
   groundBasis() {
-    const fx = -Math.sin(this.yaw), fz = -Math.cos(this.yaw);
+    const fx = -Math.sin(this.yaw),
+      fz = -Math.cos(this.yaw);
     return { forward: [fx, fz], right: [-fz, fx] };
   }
 

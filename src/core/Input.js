@@ -28,7 +28,8 @@ export class Input {
 
   /** Movement axes from WASD / arrows: x = right, y = up (screen space). */
   axes() {
-    let x = 0, y = 0;
+    let x = 0,
+      y = 0;
     if (this.isDown('w', 'arrowup')) y += 1;
     if (this.isDown('s', 'arrowdown')) y -= 1;
     if (this.isDown('d', 'arrowright')) x += 1;

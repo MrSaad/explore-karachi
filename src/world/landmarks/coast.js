@@ -1,17 +1,38 @@
 // The waterfront: Port Grand, Do Darya, Sea View, Hawke's Bay, Manora,
 // Karachi Port and Boat Basin.
-import { THREE, mat, box, cyl, cone, dome, tree, palm, umbrella, stall, table, charpai, camel, boat, ship, flagPole } from './helpers.js';
+import {
+  THREE,
+  mat,
+  box,
+  cyl,
+  cone,
+  dome,
+  tree,
+  palm,
+  umbrella,
+  stall,
+  table,
+  charpai,
+  camel,
+  boat,
+  ship,
+  flagPole,
+} from './helpers.js';
 
 const BULBS = [0xffd60a, 0xff006e, 0x06d6a0, 0x3a86ff, 0xfb5607];
 
 function stringLights(points, y = 3.2) {
   const g = new THREE.Group();
   for (let i = 0; i < points.length - 1; i++) {
-    const [ax, az] = points[i], [bx, bz] = points[i + 1];
+    const [ax, az] = points[i],
+      [bx, bz] = points[i + 1];
     for (let k = 0; k < 6; k++) {
       const t = k / 6;
       const sag = Math.sin(t * Math.PI) * 0.5;
-      const b = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 4), mat(BULBS[(i + k) % BULBS.length], { emissive: BULBS[(i + k) % BULBS.length], emissiveIntensity: 0.9 }));
+      const b = new THREE.Mesh(
+        new THREE.SphereGeometry(0.12, 6, 4),
+        mat(BULBS[(i + k) % BULBS.length], { emissive: BULBS[(i + k) % BULBS.length], emissiveIntensity: 0.9 }),
+      );
       b.position.set(ax + (bx - ax) * t, y - sag, az + (bz - az) * t);
       g.add(b);
     }
@@ -65,7 +86,14 @@ export function portGrand({ rand }) {
   return {
     group: g,
     colliders,
-    walkable: [[[-4, -1], [4, -1], [4, 26], [-4, 26]]],
+    walkable: [
+      [
+        [-4, -1],
+        [4, -1],
+        [4, 26],
+        [-4, 26],
+      ],
+    ],
     reserve: 12,
     iconY: 8,
   };
@@ -86,19 +114,37 @@ export function doDarya() {
     g.add(roof);
     colliders.push({ type: 'box', x, z: 0, hw: 4, hd: 2 });
     for (let k = 0; k < 3; k++) {
-      const tx = x - 2.6 + k * 2.6, tz = 6 + (k % 2) * 3.5;
+      const tx = x - 2.6 + k * 2.6,
+        tz = 6 + (k % 2) * 3.5;
       g.add(table(tx, tz, k % 2 ? 0xf2f2f2 : 0xd94848));
       colliders.push({ type: 'circle', x: tx, z: tz, r: 1.2 });
     }
   }
   for (const x of [-17, 17]) g.add(box(0.12, 1, 20, 0xdedede, x, 0, 8));
   g.add(box(34, 1, 0.12, 0xdedede, 0, 0, 18));
-  g.add(stringLights([[-16, 17], [-6, 17], [6, 17], [16, 17]], 3));
+  g.add(
+    stringLights(
+      [
+        [-16, 17],
+        [-6, 17],
+        [6, 17],
+        [16, 17],
+      ],
+      3,
+    ),
+  );
   for (const x of [-16, 16]) g.add(cyl(0.06, 0.06, 3, 0x888888, x, 0, 17, 4));
   return {
     group: g,
     colliders,
-    walkable: [[[-17, -3], [17, -3], [17, 18], [-17, 18]]],
+    walkable: [
+      [
+        [-17, -3],
+        [17, -3],
+        [17, 18],
+        [-17, 18],
+      ],
+    ],
     reserve: 14,
     iconY: 9,
   };
@@ -109,10 +155,15 @@ export function seaView({ rand }) {
   const colliders = [];
   const cols = [0xe63946, 0xffb703, 0x219ebc, 0x8338ec, 0x06d6a0];
   for (let i = 0; i < 7; i++) {
-    const x = -24 + i * 8 + rand() * 3, z = 4 + rand() * 4;
+    const x = -24 + i * 8 + rand() * 3,
+      z = 4 + rand() * 4;
     g.add(umbrella(x, z, cols[i % cols.length]));
   }
-  const camels = [[-10, -2, 0.4, 0xe63946], [-4, 2, 2.2, 0x8338ec], [12, -1, -0.6, 0x06d6a0]];
+  const camels = [
+    [-10, -2, 0.4, 0xe63946],
+    [-4, 2, 2.2, 0x8338ec],
+    [12, -1, -0.6, 0x06d6a0],
+  ];
   for (const [x, z, r, s] of camels) {
     g.add(camel(x, z, r, s));
     colliders.push({ type: 'circle', x, z, r: 1.3 });
@@ -139,7 +190,12 @@ function turtle(x, z, s = 1, rot = 0) {
   const head = new THREE.Mesh(new THREE.SphereGeometry(0.18 * s, 6, 5), mat(0x8a9a6a));
   head.position.set(0, 0.1 * s, 0.8 * s);
   g.add(shell, head);
-  for (const [fx, fz] of [[-0.55, 0.35], [0.55, 0.35], [-0.4, -0.5], [0.4, -0.5]]) {
+  for (const [fx, fz] of [
+    [-0.55, 0.35],
+    [0.55, 0.35],
+    [-0.4, -0.5],
+    [0.4, -0.5],
+  ]) {
     const f = new THREE.Mesh(new THREE.BoxGeometry(0.4 * s, 0.05, 0.2 * s), mat(0x8a9a6a));
     f.position.set(fx * s, 0.03, fz * s);
     g.add(f);
@@ -154,7 +210,8 @@ export function hawkesBay({ rand }) {
   const colliders = [];
   const hutColors = [0xf4a261, 0x2a9d8f, 0xe76f51, 0x8ecae6, 0xffb703];
   for (let i = 0; i < 5; i++) {
-    const x = -14 + i * 7, z = -8 + (i % 2) * 2;
+    const x = -14 + i * 7,
+      z = -8 + (i % 2) * 2;
     g.add(box(4.5, 3, 4, 0xf3ead6, x, 0, z));
     const roof = new THREE.Mesh(new THREE.ConeGeometry(3.6, 1.6, 4), mat(hutColors[i]));
     roof.rotation.y = Math.PI / 4;
@@ -184,7 +241,8 @@ export function manora() {
   g.add(lantern);
   g.add(cone(1.5, 1.6, 0xd62828, 0, 23.6, 0, 10));
   // Shri Varun Dev Mandir — a sandstone temple with a curved shikhara
-  const tx = 10, tz = -5;
+  const tx = 10,
+    tz = -5;
   const stone = mat(0xd2b07a);
   g.add(box(6, 0.8, 6, 0xbfa070, tx, 0, tz));
   g.add(box(4.5, 4, 4.5, stone, tx, 0.8, tz));
@@ -253,12 +311,14 @@ export function boatBasin({ rand }) {
   const cols = [0xe63946, 0xf4a261, 0x2a9d8f, 0xe9c46a, 0x8338ec];
   for (let i = 0; i < 5; i++) {
     const a = (i / 5) * Math.PI * 2;
-    const x = Math.cos(a) * 9, z = Math.sin(a) * 7;
+    const x = Math.cos(a) * 9,
+      z = Math.sin(a) * 7;
     g.add(stall(x, z, -a + Math.PI / 2, cols[i]));
     colliders.push({ type: 'circle', x, z, r: 1.3 });
   }
   for (let i = 0; i < 6; i++) {
-    const x = (rand() - 0.5) * 10, z = (rand() - 0.5) * 6;
+    const x = (rand() - 0.5) * 10,
+      z = (rand() - 0.5) * 6;
     if (i % 2) g.add(table(x, z));
     else g.add(charpai(x, z, rand() * 3));
     colliders.push({ type: 'circle', x, z, r: 1 });

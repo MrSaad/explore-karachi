@@ -8,7 +8,15 @@ import { makeFacadeMaterial, mat } from './materials.js';
 import { mulberry32, pick, range, pointInPolygon } from '../utils/math.js';
 
 // The "urban sprawl" area that gets low-density filler buildings between neighbourhoods.
-const URBAN = N([[-330, 310], [300, 310], [300, -20], [210, -60], [-120, -60], [-210, -40], [-330, 40]]);
+const URBAN = N([
+  [-330, 310],
+  [300, 310],
+  [300, -20],
+  [210, -60],
+  [-120, -60],
+  [-210, -40],
+  [-330, 40],
+]);
 
 const SIGN_COLORS = [0xe63946, 0xf4a261, 0x2a9d8f, 0xe9c46a, 0x8338ec, 0x06d6a0, 0xff006e, 0x3a86ff, 0xfb5607];
 const TANK_COLORS = [0x1d1d1f, 0x1d1d1f, 0x24527a, 0xf0f0f0, 0x1d1d1f];
@@ -34,7 +42,8 @@ export function buildBuildings(scene, collision) {
     for (const c of districtCells(dist)) {
       if (c.lane) continue;
       if (c.rand > style.density) continue;
-      const jx = (rand() - 0.5) * 0.6, jz = (rand() - 0.5) * 0.6;
+      const jx = (rand() - 0.5) * 0.6,
+        jz = (rand() - 0.5) * 0.6;
       place(c.x + jx, c.z + jz, c.angle, c.size, style, c.falloff, dist.style);
     }
   }
@@ -79,7 +88,8 @@ export function buildBuildings(scene, collision) {
     main.setColorAt(i, color);
     collision.addBox(b.x, b.z, b.w / 2, b.d / 2, b.angle, 'building');
 
-    const ca = Math.cos(b.angle), sa = Math.sin(b.angle);
+    const ca = Math.cos(b.angle),
+      sa = Math.sin(b.angle);
     const local = (lx, lz) => [b.x + lx * ca - lz * sa, b.z + lx * sa + lz * ca];
 
     if (b.h > 10 && rand() < 0.35) {
@@ -104,9 +114,21 @@ export function buildBuildings(scene, collision) {
       const side = Math.floor(rand() * 4);
       const along = side % 2 === 0 ? b.w : b.d;
       const off = side % 2 === 0 ? b.d / 2 + 0.08 : b.w / 2 + 0.08;
-      const [lx, lz] = [[0, off], [off, 0], [0, -off], [-off, 0]][side];
+      const [lx, lz] = [
+        [0, off],
+        [off, 0],
+        [0, -off],
+        [-off, 0],
+      ][side];
       const [sx, sz] = local(lx, lz);
-      signs.push({ x: sx, z: sz, y: 2.6, w: along * 0.8, angle: b.angle + (side * Math.PI) / 2, color: pick(rand, SIGN_COLORS) });
+      signs.push({
+        x: sx,
+        z: sz,
+        y: 2.6,
+        w: along * 0.8,
+        angle: b.angle + (side * Math.PI) / 2,
+        color: pick(rand, SIGN_COLORS),
+      });
     }
   });
   main.instanceMatrix.needsUpdate = true;

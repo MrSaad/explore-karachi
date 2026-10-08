@@ -53,7 +53,7 @@ export const places = [
     model: 'frereHall',
     tagline: 'A Venetian Gothic hall with a painted sky inside.',
     body: [
-      "Frere Hall was built in 1865 and named after Sir Bartle Frere, a British Commissioner of Sindh who worked hard to make Karachi a major port. It looks like a piece of Venice dropped into the city, with yellowish Karachi limestone, bands of red and grey sandstone, pointed arches and a central tower.",
+      'Frere Hall was built in 1865 and named after Sir Bartle Frere, a British Commissioner of Sindh who worked hard to make Karachi a major port. It looks like a piece of Venice dropped into the city, with yellowish Karachi limestone, bands of red and grey sandstone, pointed arches and a central tower.',
       "It started life as a town hall. Today it houses the Liaquat Memorial Library and a gallery whose ceiling was painted by Sadequain, one of Pakistan's best-loved artists. His mural, Arz-o-Samawat ('The Earth and the Heavens'), was still unfinished when he died in 1987.",
       "The lawns around the hall were once called Queen's Lawn and are now Bagh-e-Jinnah. Families come here for picnics and wedding photos, and on Sundays there is a sprawling second-hand book bazaar.",
     ],
@@ -63,7 +63,7 @@ export const places = [
       ['Named after', 'Sir Bartle Frere'],
     ],
     didYouKnow:
-      "For years the hall sat behind security barriers, because the US Consulate was right next door during the tense 2000s. The consulate moved away in 2011, and the gardens slowly came back to life as a public space.",
+      'For years the hall sat behind security barriers, because the US Consulate was right next door during the tense 2000s. The consulate moved away in 2011, and the gardens slowly came back to life as a public space.',
   },
   {
     id: 'empress-market',
@@ -76,9 +76,9 @@ export const places = [
     model: 'empressMarket',
     tagline: 'A Victorian clock tower above a maze of spices, fruit and everything else.',
     body: [
-      "Empress Market was named after Queen Victoria, Empress of India, and built between 1884 and 1889. Its Gothic clock tower, more than 40 metres tall, was meant to be visible across Saddar, and it still is.",
+      'Empress Market was named after Queen Victoria, Empress of India, and built between 1884 and 1889. Its Gothic clock tower, more than 40 metres tall, was meant to be visible across Saddar, and it still is.',
       'Inside, it is Karachi at full volume. There are mountains of dried fruit, sacks of red chillies and turmeric, butchers and fishmongers, sellers of birds and kittens, and shopkeepers who insist you taste something before you buy it.',
-      "According to local accounts, the site was once where Indian soldiers who rose against the British in 1857 were executed, which gives the cheerful bustle a darker backstory. In 2018 a court-ordered anti-encroachment drive demolished hundreds of shops that had grown up around the market. That opened up the view of the building again, but it also cost many traders their livelihoods.",
+      'According to local accounts, the site was once where Indian soldiers who rose against the British in 1857 were executed, which gives the cheerful bustle a darker backstory. In 2018 a court-ordered anti-encroachment drive demolished hundreds of shops that had grown up around the market. That opened up the view of the building again, but it also cost many traders their livelihoods.',
     ],
     facts: [
       ['Built', '1884–1889'],
@@ -162,7 +162,7 @@ export const places = [
     name: 'Chaukhandi Tombs',
     urdu: 'چوکھنڈی کے مقبرے',
     category: 'heritage',
-    area: 'Off the National Highway',
+    area: 'East of the city',
     pos: [395, 30],
     radius: 22,
     model: 'chaukhandi',
@@ -216,7 +216,7 @@ export const places = [
     model: 'tooba',
     tagline: 'One enormous dome and one slender minaret.',
     body: [
-      "The Tooba Mosque in Defence was built in 1969 and is better known as the Gol Masjid, or Round Mosque. It is famous for its single white marble dome, about 72 metres across, which rests on a low circular wall with no pillars inside.",
+      'The Tooba Mosque in Defence was built in 1969 and is better known as the Gol Masjid, or Round Mosque. It is famous for its single white marble dome, about 72 metres across, which rests on a low circular wall with no pillars inside.',
       'It was designed by the architect Babar Hamid Chauhan and the engineer Zaheer Haider Naqvi. The prayer hall holds around 5,000 worshippers, and a 70-metre minaret rises beside it.',
       'The acoustics under the dome are remarkable. Speak softly against the wall on one side and someone on the far side can hear you.',
     ],
@@ -225,8 +225,7 @@ export const places = [
       ['Dome', 'about 72 m across'],
       ['Minaret', 'about 70 m'],
     ],
-    didYouKnow:
-      "For many years it was described as the largest single-dome mosque in the world.",
+    didYouKnow: 'For many years it was described as the largest single-dome mosque in the world.',
   },
   {
     id: 'abdullah-shah-ghazi',
@@ -240,8 +239,8 @@ export const places = [
     tagline: "Karachi's patron saint, keeping watch over the sea.",
     body: [
       'On a small hill near the Clifton shore stands the green-and-white shrine of Abdullah Shah Ghazi. He was an 8th-century Sufi saint and a descendant of the Prophet Muhammad who, according to tradition, came to Sindh around 760 CE.',
-      "Many Karachiites believe he protects the city from the sea. When a cyclone veers away from the coast, people will tell you it was his doing. Thousands visit every week to pray, tie threads for wishes, hand out food and listen to qawwali, and his annual urs (death anniversary festival) fills the surrounding streets.",
-      "In October 2010 two suicide bombers attacked the shrine, killing several people. It was part of a wave of attacks on Sufi shrines by militants who reject these traditions. Devotees kept coming back anyway.",
+      'Many Karachiites believe he protects the city from the sea. When a cyclone veers away from the coast, people will tell you it was his doing. Thousands visit every week to pray, tie threads for wishes, hand out food and listen to qawwali, and his annual urs (death anniversary festival) fills the surrounding streets.',
+      'In October 2010 two suicide bombers attacked the shrine, killing several people. It was part of a wave of attacks on Sufi shrines by militants who reject these traditions. Devotees kept coming back anyway.',
     ],
     facts: [
       ['Saint', 'Abdullah Shah Ghazi, 8th century'],
@@ -249,7 +248,7 @@ export const places = [
       ['Colours', 'Green and white'],
     ],
     didYouKnow:
-      'There is a freshwater spring at the foot of the hill, remarkably close to the salty sea. Devotees consider it one of the saint\'s miracles.',
+      "There is a freshwater spring at the foot of the hill, remarkably close to the salty sea. Devotees consider it one of the saint's miracles.",
   },
 
   // ─────────────────────────── Modern City ───────────────────────────
@@ -287,7 +286,7 @@ export const places = [
     model: 'bahriaIcon',
     tagline: 'The tallest building in Pakistan, and a lightning rod for controversy.',
     body: [
-      "Bahria Icon Tower rises about 273 metres over Clifton, making it the tallest building in Pakistan. It was built by Bahria Town, the property empire of the tycoon Malik Riaz, and its glass sides catch the sunlight over the sea. You can see it from much of the city.",
+      'Bahria Icon Tower rises about 273 metres over Clifton, making it the tallest building in Pakistan. It was built by Bahria Town, the property empire of the tycoon Malik Riaz, and its glass sides catch the sunlight over the sea. You can see it from much of the city.',
       "Its construction was dogged by controversy. Questions were raised in court about how public land beside the shrine of Abdullah Shah Ghazi and the Bagh Ibn-e-Qasim park ended up hosting a private skyscraper. Bahria Town has been at the centre of several of Pakistan's biggest land disputes.",
       'For many Karachiites it is simply a new landmark, and a sign of how a skyline once ruled by colonial clock towers and minarets is now reaching upward in glass.',
     ],
@@ -334,7 +333,7 @@ export const places = [
     tagline: "One of Pakistan's busiest gateways, with a past involving airships.",
     body: [
       "Karachi's aviation story began at Drigh Road in the 1920s, when the British built one of the world's largest airship hangars here for an imperial airship service. The airship R101 was meant to fly to Karachi in 1930, but it crashed in France on the way and never arrived. The giant hangar stood mostly unused for decades before it was demolished.",
-      "The modern Jinnah Terminal opened in 1992. For many Pakistanis abroad it is their first taste of home: the wall of heat, crowds of relatives pressed against the barriers, and garlands of roses.",
+      'The modern Jinnah Terminal opened in 1992. For many Pakistanis abroad it is their first taste of home: the wall of heat, crowds of relatives pressed against the barriers, and garlands of roses.',
       'In June 2014 militants attacked the airport, and flights were suspended while security forces fought them off.',
     ],
     facts: [
@@ -392,7 +391,7 @@ export const places = [
       ['Landmark', 'Habib Bank Plaza (1972)'],
     ],
     didYouKnow:
-      "The State Bank of Pakistan was inaugurated by Jinnah himself in July 1948. Its old building now houses a museum of coins, banknotes and art.",
+      'The State Bank of Pakistan was inaugurated by Jinnah himself in July 1948. Its old building now houses a museum of coins, banknotes and art.',
   },
   {
     id: 'ma-jinnah-road',
@@ -430,7 +429,7 @@ export const places = [
     tagline: 'The artery that carries the city to the airport.',
     body: [
       "Shahrah-e-Faisal runs for roughly 18 km from Saddar to the airport and is Karachi's main highway. It used to be called Drigh Road and was renamed in the 1970s after King Faisal of Saudi Arabia. Along the way you pass the Finance & Trade Centre, the PAF Museum, Karsaz, Nursery and a long parade of hotels, malls and billboards.",
-      "On 18 October 2007 Benazir Bhutto returned to Pakistan after eight years in exile, and her homecoming procession crawled along this road. Near Karsaz, two bombs exploded among the crowds and killed around 180 people. She survived, only to be assassinated in Rawalpindi two months later.",
+      'On 18 October 2007 Benazir Bhutto returned to Pakistan after eight years in exile, and her homecoming procession crawled along this road. Near Karsaz, two bombs exploded among the crowds and killed around 180 people. She survived, only to be assassinated in Rawalpindi two months later.',
       'At rush hour it is a river of rickshaws, buses, motorbikes and cars, and at night it glows with lit-up billboards. Every Karachiite has a story about being stuck on Shahrah-e-Faisal.',
     ],
     facts: [
@@ -453,7 +452,7 @@ export const places = [
     tagline: 'Where Karachi shops for Eid.',
     body: [
       "Tariq Road runs through PECHS (the Pakistan Employees Co-operative Housing Society), which was set up soon after Partition to house government workers. It is one of the city's busiest shopping streets, selling fabric, shoes, bridal wear, bangles, perfume and crockery.",
-      "In the last days of Ramadan, and above all on Chaand Raat, the night the Eid moon is sighted, the street turns into a carnival. Shops stay open until dawn, families hunt for last-minute outfits, and girls queue to have mehndi (henna) painted on their hands.",
+      'In the last days of Ramadan, and above all on Chaand Raat, the night the Eid moon is sighted, the street turns into a carnival. Shops stay open until dawn, families hunt for last-minute outfits, and girls queue to have mehndi (henna) painted on their hands.',
       "Big malls such as Dolmen Mall have arrived, one of them on Tariq Road itself, but the street's small shops and haggling culture are still going strong.",
     ],
     facts: [
@@ -500,8 +499,8 @@ export const places = [
     model: 'burnsRoad',
     tagline: "The capital of Karachi's late-night food.",
     body: [
-      "After Partition, many families from Delhi settled in this part of the old city and brought their kitchens with them. Burns Road has been famous ever since for Delhi-style food: slow-cooked nihari, haleem, bun kebabs, chicken tikka, fried fish, rabri and kulfi.",
-      "The street is lined with old colonial buildings with stone fronts and wooden balconies, many of them now crumbling above the busy shopfronts. In the evening plastic tables spill onto the pavement and the air fills with smoke from the grills.",
+      'After Partition, many families from Delhi settled in this part of the old city and brought their kitchens with them. Burns Road has been famous ever since for Delhi-style food: slow-cooked nihari, haleem, bun kebabs, chicken tikka, fried fish, rabri and kulfi.',
+      'The street is lined with old colonial buildings with stone fronts and wooden balconies, many of them now crumbling above the busy shopfronts. In the evening plastic tables spill onto the pavement and the air fills with smoke from the grills.',
       'Generations of Karachiites have argued here about who makes the best nihari, and families still come from across the city to settle the question.',
     ],
     facts: [
@@ -524,8 +523,8 @@ export const places = [
     tagline: 'Late-night food stalls with a side of sea breeze.',
     body: [
       'Boat Basin is a Clifton food street named after an old basin where boats used to moor, and it comes alive after dark.',
-      "Karachi eats late, and Boat Basin is where you see it happening. Families turn up at 11 pm, students split a plate of chicken karahi, barbecue smoke curls over the parked cars, and waiters run trays out to people who never leave their vehicles.",
-      "Classic orders include seekh kebab, chicken tikka, paratha rolls, bun kebab, falooda, and a cup of doodh patti chai to finish.",
+      'Karachi eats late, and Boat Basin is where you see it happening. Families turn up at 11 pm, students split a plate of chicken karahi, barbecue smoke curls over the parked cars, and waiters run trays out to people who never leave their vehicles.',
+      'Classic orders include seekh kebab, chicken tikka, paratha rolls, bun kebab, falooda, and a cup of doodh patti chai to finish.',
     ],
     facts: [
       ['Best time', 'After 10 pm'],
@@ -533,7 +532,7 @@ export const places = [
       ['Car service', 'Yes, food comes to your window'],
     ],
     didYouKnow:
-      "The paratha roll, kebab or tikka wrapped in a flaky, buttery paratha, is often credited as a Karachi invention. It is now sold all over Pakistan.",
+      'The paratha roll, kebab or tikka wrapped in a flaky, buttery paratha, is often credited as a Karachi invention. It is now sold all over Pakistan.',
   },
   {
     id: 'port-grand',
@@ -546,9 +545,9 @@ export const places = [
     model: 'portGrand',
     tagline: 'Food and harbour views on a colonial bridge.',
     body: [
-      "Port Grand was built along the old Native Jetty Bridge, which since the 1850s has linked the city to Keamari across the harbour. In 2011 a stretch of it opened as an open-air food and entertainment complex about a kilometre long.",
-      "Here you can eat looking straight out over the harbour, with its ships, cranes, mangroves along the creek, and the lights of Keamari. There is also a banyan tree on the site that is said to be centuries old.",
-      "It has opened and closed several times over the years, but on a cool evening it is one of the few places in the city where you can sit right next to the water.",
+      'Port Grand was built along the old Native Jetty Bridge, which since the 1850s has linked the city to Keamari across the harbour. In 2011 a stretch of it opened as an open-air food and entertainment complex about a kilometre long.',
+      'Here you can eat looking straight out over the harbour, with its ships, cranes, mangroves along the creek, and the lights of Keamari. There is also a banyan tree on the site that is said to be centuries old.',
+      'It has opened and closed several times over the years, but on a cool evening it is one of the few places in the city where you can sit right next to the water.',
     ],
     facts: [
       ['Opened', '2011'],
@@ -571,7 +570,7 @@ export const places = [
     body: [
       "At the far end of Defence's seafront, a row of restaurants sits on platforms over the water. Do Darya is where Karachi comes for grilled fish, prawns and karahi, with waves breaking a few metres below.",
       'On a breezy evening the decks fill with families and friends, the sky turns orange over the sea, and the lights of passing ships blink on the horizon.',
-      "It is one of the newer parts of the city, built on land DHA reclaimed from the sea, and a sign of how Karachi keeps pushing its coastline outward.",
+      'It is one of the newer parts of the city, built on land DHA reclaimed from the sea, and a sign of how Karachi keeps pushing its coastline outward.',
     ],
     facts: [
       ['Location', 'DHA Phase 8 seafront'],
@@ -595,8 +594,8 @@ export const places = [
     tagline: 'Camels, corn on the cob and the Arabian Sea.',
     body: [
       "Clifton Beach, better known as Sea View, is Karachi's great public space. On weekends and holidays tens of thousands of people come to walk on the sand, ride camels and horses, eat roasted corn (bhutta), and let the waves soak their shalwars.",
-      "During the monsoon the sea turns rough, and swimming is regularly banned after drownings. The beach also carries scars. In 2003 the oil tanker Tasman Spirit ran aground off Karachi and spilled tens of thousands of tonnes of crude, fouling the shore for months.",
-      "Nearby is the restored Jehangir Kothari Parade, a 1920s seaside promenade paid for by a Parsi philanthropist, which looks out over the sand.",
+      'During the monsoon the sea turns rough, and swimming is regularly banned after drownings. The beach also carries scars. In 2003 the oil tanker Tasman Spirit ran aground off Karachi and spilled tens of thousands of tonnes of crude, fouling the shore for months.',
+      'Nearby is the restored Jehangir Kothari Parade, a 1920s seaside promenade paid for by a Parsi philanthropist, which looks out over the sand.',
     ],
     facts: [
       ['Things to do', 'Camel rides, bhutta, kites'],
@@ -689,7 +688,7 @@ export const places = [
     tagline: 'The old downtown of colonial stone, electronics and glorious chaos.',
     body: [
       "Saddar grew up in the 19th century as the bazaar of the British cantonment, and for a hundred years it was Karachi's downtown. Its streets are lined with stone buildings with balconies and carved details, put up by Parsi, Goan, Hindu and Muslim merchants.",
-      "Today you come here for almost anything: electronics and mobile phones, textbooks and second-hand books, clothes at Zainab Market, fabric at Bohri Bazaar and spices at Empress Market. Rickshaws, buses and pedestrians fight for every inch.",
+      'Today you come here for almost anything: electronics and mobile phones, textbooks and second-hand books, clothes at Zainab Market, fabric at Bohri Bazaar and spices at Empress Market. Rickshaws, buses and pedestrians fight for every inch.',
       'Saddar is full of traces of a more cosmopolitan city: churches, a Parsi fire temple, old cinemas and cafés, and buildings with the names of their original owners carved above the doors.',
     ],
     facts: [
@@ -712,7 +711,7 @@ export const places = [
     tagline: 'A seaside neighbourhood of mansions, shrines and sunsets.',
     body: [
       "Clifton began as a breezy seaside retreat for colonial Karachi and became one of the city's most desirable addresses. Mohatta Palace, the shrine of Abdullah Shah Ghazi, Teen Talwar, Bahria Icon Tower and the beach at Sea View are all here.",
-      "It is deeply political too. 70 Clifton is the Bhutto family home, where Zulfikar Ali Bhutto and later Benazir Bhutto lived, and where generations of party workers and journalists have gathered.",
+      'It is deeply political too. 70 Clifton is the Bhutto family home, where Zulfikar Ali Bhutto and later Benazir Bhutto lived, and where generations of party workers and journalists have gathered.',
       'Its streets mix old bungalows, high-rise apartments, malls such as Dolmen Mall, and vendors selling everything from coconut water to kites.',
     ],
     facts: [
@@ -735,11 +734,11 @@ export const places = [
     tagline: 'Wide avenues, big houses, and an army-run property empire.',
     body: [
       "The Defence Housing Authority began in the 1950s as a housing society for military officers. It has grown into one of Karachi's wealthiest areas, with eight 'phases' stretching along the coast.",
-      "Its grid of wide avenues, called khayabans, and its villas behind high walls stand in sharp contrast to the dense neighbourhoods inland. It has its own rules, security and administration, and it is run by the military.",
+      'Its grid of wide avenues, called khayabans, and its villas behind high walls stand in sharp contrast to the dense neighbourhoods inland. It has its own rules, security and administration, and it is run by the military.',
       "DHA is part of a bigger story about the Pakistani military's vast property and business interests. Critics argue these give the military outsized economic power, while residents often point to the order and services DHA provides.",
     ],
     facts: [
-      ['Began', '1950s, as an officers\' housing society'],
+      ['Began', "1950s, as an officers' housing society"],
       ['Phases', '8'],
       ['Landmarks', 'Tooba Mosque, Do Darya, Zamzama'],
     ],
@@ -759,7 +758,7 @@ export const places = [
     body: [
       'Lyari is older than the British city. Its Baloch, Sindhi and Kutchi families have lived along the Lyari River for centuries, many of them working as fishermen, dockworkers and labourers in the port.',
       "It is the heartland of Pakistani football, sometimes called 'Pakistan's little Brazil', and it has produced many of the country's footballers and boxers, including the Olympic bronze medallist Hussain Shah. Benazir Bhutto held her public wedding reception at Lyari's Kakri Ground in 1987, a sign of how central the area was to her Pakistan Peoples Party.",
-      'From the 2000s, gang wars involving figures such as Rehman Dakait and later Uzair Baloch tore through Lyari, until a paramilitary-led operation began in 2013. Since then residents have worked hard to reclaim its image, and young people are telling Lyari\'s story through football clubs, boxing gyms, music, rap, cafés and art.',
+      "From the 2000s, gang wars involving figures such as Rehman Dakait and later Uzair Baloch tore through Lyari, until a paramilitary-led operation began in 2013. Since then residents have worked hard to reclaim its image, and young people are telling Lyari's story through football clubs, boxing gyms, music, rap, cafés and art.",
     ],
     facts: [
       ['Communities', 'Baloch, Sindhi, Kutchi and more'],
@@ -774,7 +773,7 @@ export const places = [
     name: 'Keamari',
     urdu: 'کیماڑی',
     category: 'neighbourhood',
-    area: 'Port',
+    area: 'The port',
     pos: [-278, -66],
     radius: 22,
     model: null,
@@ -805,7 +804,7 @@ export const places = [
     body: [
       "Gulshan-e-Iqbal ('Iqbal's Garden', named after the poet Allama Muhammad Iqbal) was laid out by the Karachi Development Authority in the 1960s and 70s as the city spread north-east. It is now one of Karachi's biggest and busiest middle-class areas.",
       'It is a jumble of apartment blocks, markets, schools and tuition centres, with University Road running through it towards NED University and the University of Karachi. Aladdin amusement park and Millennium Mall are weekend favourites.',
-      "Like much of Karachi it lives with chronic water shortages. Water tankers are a constant sight, and the rooftop water tanks you see everywhere in this game are a very real feature of the city.",
+      'Like much of Karachi it lives with chronic water shortages. Water tankers are a constant sight, and the rooftop water tanks you see everywhere in this game are a very real feature of the city.',
     ],
     facts: [
       ['Named after', 'Allama Iqbal'],
@@ -849,8 +848,8 @@ export const places = [
     model: null,
     tagline: "One of Asia's largest informal settlements, and a world model of self-help.",
     body: [
-      "Orangi Town spreads across the hills of north-west Karachi. It grew from the 1960s as an informal settlement, built by migrants from all over Pakistan and by Bihari families displaced by the 1971 war that created Bangladesh. It is often described as one of the largest katchi abadis (informal settlements) in Asia.",
-      "In 1980 the social scientist Akhtar Hameed Khan founded the Orangi Pilot Project (OPP). Rather than wait for the government, the residents of each lane organised, paid for and built their own sewer lines, with OPP providing technical help. The model has been studied and copied around the world.",
+      'Orangi Town spreads across the hills of north-west Karachi. It grew from the 1960s as an informal settlement, built by migrants from all over Pakistan and by Bihari families displaced by the 1971 war that created Bangladesh. It is often described as one of the largest katchi abadis (informal settlements) in Asia.',
+      'In 1980 the social scientist Akhtar Hameed Khan founded the Orangi Pilot Project (OPP). Rather than wait for the government, the residents of each lane organised, paid for and built their own sewer lines, with OPP providing technical help. The model has been studied and copied around the world.',
       "In 2013 Perween Rahman, who led OPP's work mapping land and informal settlements in Karachi, was shot dead in Orangi. Her research on land-grabbing had made her powerful enemies, and her murder became a symbol of the dangers facing activists in the city.",
     ],
     facts: [
@@ -873,7 +872,7 @@ export const places = [
     tagline: 'Factories, mangroves, and a township designed by a Greek planner.',
     body: [
       "In the late 1950s, General Ayub Khan's government moved refugees out of inner-city camps into a new township at Korangi. It was planned by the Greek architect Constantinos Doxiadis, who also designed Islamabad.",
-      'Korangi grew into one of Karachi\'s main industrial zones, home to textile mills, tanneries, pharmaceutical plants and countless workshops. It is a huge employer, and also a major source of the pollution that flows into Korangi Creek.',
+      "Korangi grew into one of Karachi's main industrial zones, home to textile mills, tanneries, pharmaceutical plants and countless workshops. It is a huge employer, and also a major source of the pollution that flows into Korangi Creek.",
       'Along the creek, mangrove forests survive between the factories and the sea, sheltering birds and fish and helping to protect the coast.',
     ],
     facts: [

@@ -5,6 +5,7 @@ import { Input } from './Input.js';
 import { buildGround } from '../world/Ground.js';
 import { buildBuildings } from '../world/Buildings.js';
 import { buildLandmarks } from '../world/landmarks/index.js';
+import { buildAmbient } from '../world/Ambient.js';
 import { CollisionWorld } from '../world/Collision.js';
 import { getTerrain } from '../world/terrain.js';
 import { Player } from '../entities/Player.js';
@@ -87,6 +88,9 @@ export class Game extends EventTarget {
     onProgress('Raising the skyline…');
     await tick();
     this.buildings = buildBuildings(this.scene, this.collision);
+    onProgress('Planting trees, starting the traffic…');
+    await tick();
+    this.ambient = buildAmbient(this.scene, this.collision, this.terrain);
   }
 
   createPlayer(outfit) {
@@ -98,7 +102,8 @@ export class Game extends EventTarget {
   }
 
   resize() {
-    const w = this.container.clientWidth, h = this.container.clientHeight;
+    const w = this.container.clientWidth,
+      h = this.container.clientHeight;
     this.renderer.setSize(w, h);
     this.iso.setAspect(w / h);
   }

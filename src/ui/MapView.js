@@ -47,9 +47,11 @@ export class MapView extends EventTarget {
             <h3>Show on map</h3>
             <div class="legend">
               ${Object.entries(this.categories)
-                .map(([id, c]) => `<button data-cat="${id}" class="${this.hidden.has(id) ? 'off' : ''}">
+                .map(
+                  ([id, c]) => `<button data-cat="${id}" class="${this.hidden.has(id) ? 'off' : ''}">
                   <span class="dot" style="background:${c.color}"></span>${c.icon} ${c.label}
-                  <span class="count">${counts[id]?.seen || 0}/${counts[id]?.total || 0}</span></button>`)
+                  <span class="count">${counts[id]?.seen || 0}/${counts[id]?.total || 0}</span></button>`,
+                )
                 .join('')}
             </div>
             <div class="map-key">
@@ -114,7 +116,8 @@ export class MapView extends EventTarget {
     this.dpr = dpr;
     // fit the land (not all the sea) into the canvas
     const bounds = { minX: -440, maxX: 440, minZ: -320, maxZ: 200 };
-    const bw = bounds.maxX - bounds.minX, bh = bounds.maxZ - bounds.minZ;
+    const bw = bounds.maxX - bounds.minX,
+      bh = bounds.maxZ - bounds.minZ;
     this.scale = Math.min(this.canvas.width / bw, this.canvas.height / bh);
     this.ox = (this.canvas.width - bw * this.scale) / 2 - bounds.minX * this.scale;
     this.oz = (this.canvas.height - bh * this.scale) / 2 - bounds.minZ * this.scale;
@@ -215,13 +218,18 @@ export class MapView extends EventTarget {
 
   _pick(e) {
     const r = this.canvas.getBoundingClientRect();
-    const sx = (e.clientX - r.left) * this.dpr, sy = (e.clientY - r.top) * this.dpr;
-    let best = null, bestD = 14 * this.dpr;
+    const sx = (e.clientX - r.left) * this.dpr,
+      sy = (e.clientY - r.top) * this.dpr;
+    let best = null,
+      bestD = 14 * this.dpr;
     for (const en of this.entries) {
       if (this.hidden.has(en.place.category)) continue;
       const [px, py] = this.toScreen(en.pos.x, en.pos.z);
       const d = Math.hypot(px - sx, py - sy);
-      if (d < bestD) { bestD = d; best = en; }
+      if (d < bestD) {
+        bestD = d;
+        best = en;
+      }
     }
     return { sx, sy, entry: best, cssX: e.clientX - r.left, cssY: e.clientY - r.top };
   }
@@ -247,10 +255,14 @@ export class MapView extends EventTarget {
   }
 
   _districtAt(x, z) {
-    let best = null, bestD = 1;
+    let best = null,
+      bestD = 1;
     for (const d of DISTRICTS) {
       const k = Math.hypot(x - d.center[0], z - d.center[1]) / d.r;
-      if (k < bestD) { bestD = k; best = d; }
+      if (k < bestD) {
+        bestD = k;
+        best = d;
+      }
     }
     return best;
   }

@@ -42,8 +42,8 @@ export function teenTalwar() {
 
 export function bahriaIcon() {
   const g = new THREE.Group();
-  const glass = mat(0x6f9fc0, { roughness: 0.15, metalness: 0.45 });
-  const glass2 = mat(0x88b4cf, { roughness: 0.15, metalness: 0.45 });
+  const glass = mat(0x9cc6de, { roughness: 0.2, metalness: 0.3 });
+  const glass2 = mat(0xb3d4e6, { roughness: 0.2, metalness: 0.3 });
   g.add(box(26, 8, 20, facade(0xd8d4cc)));
   // main tower — slightly tapered with a sloped crown
   const main = new THREE.Mesh(new THREE.CylinderGeometry(6.3, 7.4, 80, 4), glass);
@@ -78,7 +78,9 @@ export function bahriaIcon() {
 
 export function stadium() {
   const g = new THREE.Group();
-  const RX = 22, RZ = 17, SEG = 44;
+  const RX = 22,
+    RZ = 17,
+    SEG = 44;
   const field = new THREE.Mesh(new THREE.CircleGeometry(1, 40), mat(0x5fa045));
   field.rotation.x = -Math.PI / 2;
   field.scale.set(RX - 3, RZ - 3, 1);
@@ -89,10 +91,14 @@ export function stadium() {
   const seatColors = [0x0b6e3b, 0xf2f2f2, 0x1d6fb8, 0x0b6e3b];
   for (let i = 0; i < SEG; i++) {
     const a = (i / SEG) * Math.PI * 2;
-    const x = Math.cos(a) * RX, z = Math.sin(a) * RZ;
+    const x = Math.cos(a) * RX,
+      z = Math.sin(a) * RZ;
     const seg = new THREE.Group();
     for (let t = 0; t < 3; t++) {
-      const step = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.6 + t * 1.6, 1.6), mat(seatColors[(i + t) % seatColors.length]));
+      const step = new THREE.Mesh(
+        new THREE.BoxGeometry(3.4, 1.6 + t * 1.6, 1.6),
+        mat(seatColors[(i + t) % seatColors.length]),
+      );
       step.position.set(0, (1.6 + t * 1.6) / 2, t * 1.5);
       seg.add(step);
     }
@@ -101,8 +107,14 @@ export function stadium() {
     g.add(seg);
   }
   // floodlights
-  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
-    const px = x * (RX + 2), pz = z * (RZ + 2);
+  for (const [x, z] of [
+    [-1, -1],
+    [1, -1],
+    [-1, 1],
+    [1, 1],
+  ]) {
+    const px = x * (RX + 2),
+      pz = z * (RZ + 2);
     g.add(cyl(0.4, 0.5, 22, 0xb8b8b8, px, 0, pz, 6));
     const panel = box(4, 2.4, 0.5, 0xfffbe0, px, 22, pz, { emissive: 0xfff3b0, emissiveIntensity: 0.5 });
     panel.lookAt(0, 22, 0);
@@ -138,7 +150,10 @@ function plane(x, z, rot, tail = 0x0b6e3b) {
   fin.position.set(0, 4.6, -11.5);
   const stab = new THREE.Mesh(new THREE.BoxGeometry(7, 0.25, 1.8), white);
   stab.position.set(0, 2.6, -11.5);
-  const stripe = new THREE.Mesh(new THREE.CylinderGeometry(1.12, 1.12, 14, 10, 1, true, -0.4, 0.8), mat(tail, { side: THREE.DoubleSide }));
+  const stripe = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.12, 1.12, 14, 10, 1, true, -0.4, 0.8),
+    mat(tail, { side: THREE.DoubleSide }),
+  );
   stripe.rotation.x = Math.PI / 2;
   stripe.position.y = 2.2;
   g.add(body, nose, tailCone, wing, fin, stab, stripe);
@@ -265,27 +280,42 @@ export function billboards({ road, x: cx, z: cz }) {
   const colliders = [];
   if (!road) return { group: g, colliders, reserve: 0, iconY: 12 };
   // find the path point nearest to our centre, then walk along it
-  let best = 0, bestD = Infinity;
+  let best = 0,
+    bestD = Infinity;
   road.path.forEach((p, i) => {
     const d = Math.hypot(p[0] - cx, p[1] - cz);
-    if (d < bestD) { bestD = d; best = i; }
+    if (d < bestD) {
+      bestD = d;
+      best = i;
+    }
   });
   let k = 0;
   for (let off = -30; off <= 30; off += 15) {
     const i = Math.max(1, Math.min(road.path.length - 2, best + Math.round(off / 3)));
     const [px, pz] = road.path[i];
     const [nx, nz] = road.path[i + 1];
-    let dx = nx - px, dz = nz - pz;
+    let dx = nx - px,
+      dz = nz - pz;
     const l = Math.hypot(dx, dz) || 1;
-    dx /= l; dz /= l;
+    dx /= l;
+    dz /= l;
     const side = k % 2 ? 1 : -1;
     const ox = px + dz * side * (road.width / 2 + 5) - cx;
     const oz = pz - dx * side * (road.width / 2 + 5) - cz;
     const b = new THREE.Group();
     b.add(cyl(0.35, 0.45, 10, 0x7d7d7d, 0, 0, 0, 6));
     const panel = new THREE.Mesh(new THREE.BoxGeometry(9, 4.5, 0.4), [
-      mat(0x555555), mat(0x555555), mat(0x555555), mat(0x555555),
-      new THREE.MeshStandardMaterial({ map: adTexture(k), roughness: 0.6, emissive: 0xffffff, emissiveIntensity: 0.12, emissiveMap: adTexture(k) }),
+      mat(0x555555),
+      mat(0x555555),
+      mat(0x555555),
+      mat(0x555555),
+      new THREE.MeshStandardMaterial({
+        map: adTexture(k),
+        roughness: 0.6,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.12,
+        emissiveMap: adTexture(k),
+      }),
       new THREE.MeshStandardMaterial({ map: adTexture(k + 3), roughness: 0.6 }),
     ]);
     panel.position.y = 12;

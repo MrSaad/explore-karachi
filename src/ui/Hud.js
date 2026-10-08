@@ -48,10 +48,14 @@ export class Hud extends EventTarget {
     this._promptKey = '';
     this._area = '';
 
-    this.el.querySelectorAll('[data-act]').forEach((b) =>
-      b.addEventListener('click', () => this.dispatchEvent(new CustomEvent('action', { detail: b.dataset.act }))),
-    );
-    this.el.querySelector('.minimap').addEventListener('click', () => this.dispatchEvent(new CustomEvent('action', { detail: 'map' })));
+    this.el
+      .querySelectorAll('[data-act]')
+      .forEach((b) =>
+        b.addEventListener('click', () => this.dispatchEvent(new CustomEvent('action', { detail: b.dataset.act }))),
+      );
+    this.el
+      .querySelector('.minimap')
+      .addEventListener('click', () => this.dispatchEvent(new CustomEvent('action', { detail: 'map' })));
   }
 
   setSound(on) {
@@ -84,7 +88,8 @@ export class Hud extends EventTarget {
 
   drawMinimap({ x, z, heading, rickshaw, entries, discovered, driving }) {
     const ctx = this.miniCtx;
-    const W = this.mini.width, H = this.mini.height;
+    const W = this.mini.width,
+      H = this.mini.height;
     const s = MINI_ZOOM * (W / 190);
     ctx.save();
     ctx.clearRect(0, 0, W, H);

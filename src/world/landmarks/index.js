@@ -37,9 +37,11 @@ export function buildLandmarks(scene, collision, terrain, places) {
       g.rotation.y = rot;
       scene.add(g);
       entry.group = g;
-      entry.anchor.y = built.iconY ?? 6;
+      // keep icons low enough to stay on screen when you're standing next to tall buildings
+      entry.anchor.y = Math.min(built.iconY ?? 6, 12);
 
-      const c = Math.cos(rot), s = Math.sin(rot);
+      const c = Math.cos(rot),
+        s = Math.sin(rot);
       // three.js rotation.y maps local (x, z) → (x·cos + z·sin, −x·sin + z·cos)
       const toWorld = (lx, lz) => [mx + lx * c + lz * s, mz - lx * s + lz * c];
       for (const col of built.colliders || []) {

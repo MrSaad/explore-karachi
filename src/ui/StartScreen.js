@@ -58,7 +58,10 @@ export class StartScreen {
     const cam = new THREE.PerspectiveCamera(30, 360 / 380, 0.1, 50);
     cam.position.set(0, 1.4, 5.2);
     cam.lookAt(0, 0.95, 0);
-    const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.08, 32), new THREE.MeshStandardMaterial({ color: 0xe8d5a9 }));
+    const disc = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.9, 0.9, 0.08, 32),
+      new THREE.MeshStandardMaterial({ color: 0xe8d5a9 }),
+    );
     disc.position.y = -0.04;
     scene.add(disc);
     const chars = {
@@ -106,7 +109,9 @@ export class StartScreen {
     this.el.querySelector('.ready').classList.remove('hidden');
     if (outfit) this._select(outfit);
     this._startPreviews();
-    this.el.querySelectorAll('.choice').forEach((b) => b.addEventListener('click', () => this._select(b.dataset.outfit)));
+    this.el
+      .querySelectorAll('.choice')
+      .forEach((b) => b.addEventListener('click', () => this._select(b.dataset.outfit)));
     const actions = this.el.querySelector('.start-actions');
     return new Promise((resolve) => {
       const go = (fresh) => {

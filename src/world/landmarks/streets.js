@@ -6,10 +6,14 @@ import { THREE, mat, box, cyl, cone, sphere, umbrella, stall, table, charpai, tr
 function alongRoad(road, cx, cz, { span = 30, step = 6, offset = 2 } = {}) {
   const out = [];
   if (!road) return out;
-  let best = 0, bestD = Infinity;
+  let best = 0,
+    bestD = Infinity;
   road.path.forEach((p, i) => {
     const d = Math.hypot(p[0] - cx, p[1] - cz);
-    if (d < bestD) { bestD = d; best = i; }
+    if (d < bestD) {
+      bestD = d;
+      best = i;
+    }
   });
   // walk along the path accumulating distance in both directions
   const collect = (dir) => {
@@ -22,13 +26,17 @@ function alongRoad(road, cx, cz, { span = 30, step = 6, offset = 2 } = {}) {
       const seg = Math.hypot(bx - ax, bz - az);
       while (next <= dist + seg && next < span / 2) {
         const t = (next - dist) / seg;
-        const px = ax + (bx - ax) * t, pz = az + (bz - az) * t;
-        let dx = (bx - ax) * dir, dz = (bz - az) * dir;
+        const px = ax + (bx - ax) * t,
+          pz = az + (bz - az) * t;
+        let dx = (bx - ax) * dir,
+          dz = (bz - az) * dir;
         const l = Math.hypot(dx, dz) || 1;
-        dx /= l; dz /= l;
+        dx /= l;
+        dz /= l;
         for (const side of [-1, 1]) {
           const o = road.width / 2 + offset;
-          const x = px + dz * side * o, z = pz - dx * side * o;
+          const x = px + dz * side * o,
+            z = pz - dx * side * o;
           out.push({ x: x - cx, z: z - cz, face: Math.atan2(px - x, pz - z), side });
         }
         next += step;
@@ -65,7 +73,8 @@ export function burnsRoad({ road, x: cx, z: cz, rand }) {
   for (let i = 0; i < 5; i++) {
     const s = spots[(i * 3 + 1) % Math.max(1, spots.length)];
     if (!s) break;
-    const tx = s.x * 0.7, tz = s.z * 0.7;
+    const tx = s.x * 0.7,
+      tz = s.z * 0.7;
     g.add(table(tx + (rand() - 0.5) * 2, tz + (rand() - 0.5) * 2, 0xf2f2f2));
   }
   return { group: g, colliders, reserve: 0, iconY: 8 };
@@ -107,11 +116,20 @@ export function tariqRoad({ road, x: cx, z: cz, rand }) {
   // Chaand Raat lights strung across the road
   const BULBS = [0xffd60a, 0xff006e, 0x06d6a0, 0x3a86ff];
   for (let i = 0; i + 1 < spots.length; i += 4) {
-    const a = spots[i], b = spots[i + 1];
+    const a = spots[i],
+      b = spots[i + 1];
     for (let k = 0; k <= 8; k++) {
       const t = k / 8;
       const c = BULBS[k % BULBS.length];
-      const bulb = sphere(0.12, mat(c, { emissive: c, emissiveIntensity: 0.9 }), a.x + (b.x - a.x) * t, 5.5 - Math.sin(t * Math.PI) * 0.8, a.z + (b.z - a.z) * t, 6, 4);
+      const bulb = sphere(
+        0.12,
+        mat(c, { emissive: c, emissiveIntensity: 0.9 }),
+        a.x + (b.x - a.x) * t,
+        5.5 - Math.sin(t * Math.PI) * 0.8,
+        a.z + (b.z - a.z) * t,
+        6,
+        4,
+      );
       g.add(bulb);
     }
   }
@@ -138,7 +156,8 @@ export function zamzama({ road, x: cx, z: cz }) {
 
 export function lyariFootball() {
   const g = new THREE.Group();
-  const cx = 0, cz = -3;
+  const cx = 0,
+    cz = -3;
   // dusty pitch with chalk lines
   g.add(box(19, 0.06, 12, 0xc9a86b, cx, 0.05, cz));
   const white = mat(0xf5f5f5);
@@ -157,9 +176,16 @@ export function lyariFootball() {
   }
   g.add(sphere(0.22, 0xffffff, cx + 2, 0.22, cz + 1, 8, 6));
   // a small boxing ring beside the pitch
-  const bx = 14, bz = 2;
+  const bx = 14,
+    bz = 2;
   g.add(box(5, 0.8, 5, 0x1d3557, bx, 0, bz));
-  for (const [px, pz] of [[-2.3, -2.3], [2.3, -2.3], [-2.3, 2.3], [2.3, 2.3]]) g.add(cyl(0.1, 0.1, 1.6, 0xe63946, bx + px, 0.8, bz + pz, 6));
+  for (const [px, pz] of [
+    [-2.3, -2.3],
+    [2.3, -2.3],
+    [-2.3, 2.3],
+    [2.3, 2.3],
+  ])
+    g.add(cyl(0.1, 0.1, 1.6, 0xe63946, bx + px, 0.8, bz + pz, 6));
   for (const y of [1.4, 1.9]) {
     g.add(box(4.6, 0.05, 0.05, 0xf5f5f5, bx, y, bz - 2.3), box(4.6, 0.05, 0.05, 0xf5f5f5, bx, y, bz + 2.3));
     g.add(box(0.05, 0.05, 4.6, 0xf5f5f5, bx - 2.3, y, bz), box(0.05, 0.05, 4.6, 0xf5f5f5, bx + 2.3, y, bz));

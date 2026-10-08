@@ -18,17 +18,23 @@ export function ribbonGeometry(pts, width, y = 0, closed = false) {
   for (let i = 0; i < n; i++) {
     const prev = pts[closed ? (i - 1 + n) % n : Math.max(0, i - 1)];
     const next = pts[closed ? (i + 1) % n : Math.min(n - 1, i + 1)];
-    let dx = next[0] - prev[0], dz = next[1] - prev[1];
+    let dx = next[0] - prev[0],
+      dz = next[1] - prev[1];
     const l = Math.hypot(dx, dz) || 1;
-    dx /= l; dz /= l;
+    dx /= l;
+    dz /= l;
     // perpendicular (left side)
-    const px = dz, pz = -dx;
+    const px = dz,
+      pz = -dx;
     if (i > 0) dist += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
     pos.push(pts[i][0] + px * hw, y, pts[i][1] + pz * hw);
     pos.push(pts[i][0] - px * hw, y, pts[i][1] - pz * hw);
     uv.push(0, dist, 1, dist);
     if (i < n - 1 || closed) {
-      const a = i * 2, b = i * 2 + 1, c = ((i + 1) % n) * 2, d = ((i + 1) % n) * 2 + 1;
+      const a = i * 2,
+        b = i * 2 + 1,
+        c = ((i + 1) % n) * 2,
+        d = ((i + 1) % n) * 2 + 1;
       idx.push(a, b, c, b, d, c);
     }
   }
@@ -51,15 +57,19 @@ function dashGeometry(pts, width, dash, gap, y, offset = 0) {
     const [bx, bz] = pts[i + 1];
     const segLen = Math.hypot(bx - ax, bz - az);
     if (segLen < 1e-6) continue;
-    const dx = (bx - ax) / segLen, dz = (bz - az) / segLen;
-    const px = dz, pz = -dx;
+    const dx = (bx - ax) / segLen,
+      dz = (bz - az) / segLen;
+    const px = dz,
+      pz = -dx;
     let s = 0;
     while (segLen - s > 1e-6) {
       const remain = (on ? dash : gap) - carry;
       const step = Math.min(remain, segLen - s);
       if (on) {
-        const x0 = ax + dx * s + px * offset, z0 = az + dz * s + pz * offset;
-        const x1 = ax + dx * (s + step) + px * offset, z1 = az + dz * (s + step) + pz * offset;
+        const x0 = ax + dx * s + px * offset,
+          z0 = az + dz * s + pz * offset;
+        const x1 = ax + dx * (s + step) + px * offset,
+          z1 = az + dz * (s + step) + pz * offset;
         const k = pos.length / 3;
         const hw = width / 2;
         pos.push(x0 + px * hw, y, z0 + pz * hw, x0 - px * hw, y, z0 - pz * hw);
@@ -92,7 +102,8 @@ function mergeGeometries(geoms) {
   const pos = new Float32Array(vCount * 3);
   const nor = new Float32Array(vCount * 3);
   const idx = new Uint32Array(iCount);
-  let vo = 0, io = 0;
+  let vo = 0,
+    io = 0;
   for (const g of geoms) {
     pos.set(g.attributes.position.array, vo * 3);
     nor.set(g.attributes.normal.array, vo * 3);
@@ -113,8 +124,8 @@ function makeSeaMaterial() {
   return new THREE.ShaderMaterial({
     uniforms: {
       uTime: { value: 0 },
-      uDeep: { value: new THREE.Color(0x1f6f93) },
-      uShallow: { value: new THREE.Color(0x3fa7c4) },
+      uDeep: { value: new THREE.Color(0x2b7fa3) },
+      uShallow: { value: new THREE.Color(0x4fb3cc) },
       uSun: { value: new THREE.Vector3(0.5, 0.8, 0.3).normalize() },
     },
     vertexShader: /* glsl */ `
@@ -141,12 +152,12 @@ function makeSeaMaterial() {
       void main() {
         float depth = smoothstep(120.0, 280.0, vPos.z);
         vec3 col = mix(uShallow, uDeep, depth);
-        col += vWave * 0.35;
+        col += vWave * 0.12;
         // glints
         vec2 cell = floor(vPos.xz * 0.5);
         float h = hash(cell);
         float glint = step(0.985, h) * (0.5 + 0.5 * sin(uTime * 3.0 + h * 40.0));
-        col += glint * 0.35;
+        col += glint * 0.25;
         gl_FragColor = vec4(col, 1.0);
         #include <colorspace_fragment>
       }
@@ -236,7 +247,10 @@ export function buildGround(scene) {
     disc.receiveShadow = true;
     const curb = new THREE.Mesh(new THREE.CylinderGeometry(rb.island, rb.island, 0.5, 24), mat(0xe8e2d4));
     curb.position.set(rb.at[0], 0.25, rb.at[1]);
-    const grass = new THREE.Mesh(new THREE.CylinderGeometry(rb.island - 0.4, rb.island - 0.4, 0.56, 24), mat(PALETTE.grass));
+    const grass = new THREE.Mesh(
+      new THREE.CylinderGeometry(rb.island - 0.4, rb.island - 0.4, 0.56, 24),
+      mat(PALETTE.grass),
+    );
     grass.position.set(rb.at[0], 0.27, rb.at[1]);
     curb.receiveShadow = grass.receiveShadow = true;
     group.add(disc, curb, grass);

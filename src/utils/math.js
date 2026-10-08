@@ -26,20 +26,24 @@ export const range = (rand, a, b) => a + rand() * (b - a);
 export function pointInPolygon(x, z, poly) {
   let inside = false;
   for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const xi = poly[i][0], zi = poly[i][1];
-    const xj = poly[j][0], zj = poly[j][1];
-    if ((zi > z) !== (zj > z) && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
+    const xi = poly[i][0],
+      zi = poly[i][1];
+    const xj = poly[j][0],
+      zj = poly[j][1];
+    if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
   }
   return inside;
 }
 
 /** Distance from point to segment, plus the closest-point parameter t. */
 export function distToSegment(px, pz, ax, az, bx, bz) {
-  const dx = bx - ax, dz = bz - az;
+  const dx = bx - ax,
+    dz = bz - az;
   const len2 = dx * dx + dz * dz;
   let t = len2 > 0 ? ((px - ax) * dx + (pz - az) * dz) / len2 : 0;
   t = clamp(t, 0, 1);
-  const cx = ax + dx * t, cz = az + dz * t;
+  const cx = ax + dx * t,
+    cz = az + dz * t;
   return { d: Math.hypot(px - cx, pz - cz), t, cx, cz };
 }
 
@@ -79,7 +83,8 @@ export function samplePath(path, s) {
   const t = (s - cum[i]) / segLen;
   const [ax, az] = pts[i];
   const [bx, bz] = pts[i + 1];
-  const dx = bx - ax, dz = bz - az;
+  const dx = bx - ax,
+    dz = bz - az;
   const l = Math.hypot(dx, dz) || 1;
   return { x: ax + dx * t, z: az + dz * t, dx: dx / l, dz: dz / l };
 }
@@ -93,7 +98,8 @@ export function smoothPolyline(pts, iterations = 2, closed = false) {
     const limit = closed ? n : n - 1;
     if (!closed) next.push(out[0]);
     for (let i = 0; i < limit; i++) {
-      const a = out[i], b = out[(i + 1) % n];
+      const a = out[i],
+        b = out[(i + 1) % n];
       next.push([a[0] * 0.75 + b[0] * 0.25, a[1] * 0.75 + b[1] * 0.25]);
       next.push([a[0] * 0.25 + b[0] * 0.75, a[1] * 0.25 + b[1] * 0.75]);
     }
@@ -131,11 +137,16 @@ export function splinePolyline(pts, step = 4, closed = false) {
   const out = [];
   const segs = closed ? n : n - 1;
   for (let i = 0; i < segs; i++) {
-    const p0 = get(i - 1), p1 = get(i), p2 = get(i + 1), p3 = get(i + 2);
+    const p0 = get(i - 1),
+      p1 = get(i),
+      p2 = get(i + 1),
+      p3 = get(i + 2);
     const len = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
     const count = Math.max(1, Math.ceil(len / step));
     for (let k = 0; k < count; k++) {
-      const t = k / count, t2 = t * t, t3 = t2 * t;
+      const t = k / count,
+        t2 = t * t,
+        t3 = t2 * t;
       const f = (a, b, c, d) =>
         0.5 * (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t2 + (-a + 3 * b - 3 * c + d) * t3);
       out.push([f(p0[0], p1[0], p2[0], p3[0]), f(p0[1], p1[1], p2[1], p3[1])]);

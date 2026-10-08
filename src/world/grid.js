@@ -18,12 +18,14 @@ export function* districtCells(d) {
   if (!style) return;
   const s = style.spacing;
   const a = d.grid || 0;
-  const ca = Math.cos(a), sa = Math.sin(a);
+  const ca = Math.cos(a),
+    sa = Math.sin(a);
   const K = Math.ceil(d.r / s) + 1;
   const rand = mulberry32(hashStr(d.id));
   for (let i = -K; i <= K; i++) {
     for (let j = -K; j <= K; j++) {
-      const lx = i * s, lz = j * s;
+      const lx = i * s,
+        lz = j * s;
       const x = d.center[0] + lx * ca - lz * sa;
       const z = d.center[1] + lx * sa + lz * ca;
       const dist = Math.hypot(lx, lz);

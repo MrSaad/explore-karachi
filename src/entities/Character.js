@@ -34,9 +34,27 @@ export function randomOutfit(rand) {
   const p = (arr) => arr[Math.floor(rand() * arr.length)];
   if (rand() < 0.5) {
     const k = p(KAMEEZ);
-    return { gender: 'male', kameez: k, shalwar: k, waistcoat: rand() < 0.35 ? p([0x3b3b3b, 0x6b2f2a, 0x2f3f5c]) : null, shoes: p([0x3b2a1e, 0x6b4226, 0x222222]), skin: p(SKINS), hair: 0x1e1a18, cap: rand() < 0.2 ? 0xf5f5f5 : null };
+    return {
+      gender: 'male',
+      kameez: k,
+      shalwar: k,
+      waistcoat: rand() < 0.35 ? p([0x3b3b3b, 0x6b2f2a, 0x2f3f5c]) : null,
+      shoes: p([0x3b2a1e, 0x6b4226, 0x222222]),
+      skin: p(SKINS),
+      hair: 0x1e1a18,
+      cap: rand() < 0.2 ? 0xf5f5f5 : null,
+    };
   }
-  return { gender: 'female', kameez: p(FEMALE_KAMEEZ), shalwar: p([0xf3e3c3, 0xffffff, 0x222222, 0xf2b134]), dupatta: p(DUPATTA), trim: 0xe8c547, shoes: p([0xb5543c, 0x6b4226, 0xc9a227]), skin: p(SKINS), hair: 0x1e1a18 };
+  return {
+    gender: 'female',
+    kameez: p(FEMALE_KAMEEZ),
+    shalwar: p([0xf3e3c3, 0xffffff, 0x222222, 0xf2b134]),
+    dupatta: p(DUPATTA),
+    trim: 0xe8c547,
+    shoes: p([0xb5543c, 0x6b4226, 0xc9a227]),
+    skin: p(SKINS),
+    hair: 0x1e1a18,
+  };
 }
 
 const cyl = (rt, rb, h, seg = 8, open = false) => new THREE.CylinderGeometry(rt, rb, h, seg, 1, open);
@@ -50,7 +68,10 @@ export class Character {
     this.phase = 0;
     this.sitting = false;
     this.build(outfit);
-    if (shadows) this.root.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+    if (shadows)
+      this.root.traverse((o) => {
+        if (o.isMesh) o.castShadow = true;
+      });
   }
 
   build(o) {
@@ -76,12 +97,18 @@ export class Character {
     // Kameez: torso + flared skirt down to the knee
     const torso = new THREE.Mesh(cyl(female ? 0.17 : 0.2, 0.19, 0.52), kameez);
     torso.position.y = 1.2;
-    const skirt = new THREE.Mesh(cyl(0.2, female ? 0.31 : 0.28, 0.5, 10, true), mat(o.kameez, { side: THREE.DoubleSide }));
+    const skirt = new THREE.Mesh(
+      cyl(0.2, female ? 0.31 : 0.28, 0.5, 10, true),
+      mat(o.kameez, { side: THREE.DoubleSide }),
+    );
     skirt.position.y = 0.72;
     this.body.add(torso, skirt);
 
     if (o.trim) {
-      const hem = new THREE.Mesh(cyl(female ? 0.315 : 0.285, female ? 0.315 : 0.285, 0.06, 10, true), mat(o.trim, { side: THREE.DoubleSide }));
+      const hem = new THREE.Mesh(
+        cyl(female ? 0.315 : 0.285, female ? 0.315 : 0.285, 0.06, 10, true),
+        mat(o.trim, { side: THREE.DoubleSide }),
+      );
       hem.position.y = 0.49;
       this.body.add(hem);
     }
@@ -130,7 +157,10 @@ export class Character {
       braid.rotation.x = 0.12;
       this.body.add(braid);
     } else {
-      const beardish = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 4, 0, Math.PI * 2, Math.PI * 0.55, Math.PI * 0.3), mat(o.hair));
+      const beardish = new THREE.Mesh(
+        new THREE.SphereGeometry(0.13, 8, 4, 0, Math.PI * 2, Math.PI * 0.55, Math.PI * 0.3),
+        mat(o.hair),
+      );
       beardish.position.set(0, 1.66, 0.025);
       beardish.scale.set(1, 1, 0.9);
       beardish.visible = !!o.beard;
@@ -146,9 +176,13 @@ export class Character {
     if (o.dupatta) {
       const dmat = mat(o.dupatta, { side: THREE.DoubleSide });
       // draped loosely over the head…
-      const hood = new THREE.Mesh(new THREE.SphereGeometry(0.19, 10, 6, Math.PI * 0.15, Math.PI * 1.7, 0, Math.PI * 0.62), dmat);
+      // (sphere segment with an opening for the face; phi = 0 points to -x, so turn it to face +z)
+      const hood = new THREE.Mesh(
+        new THREE.SphereGeometry(0.19, 10, 6, Math.PI * 0.27, Math.PI * 1.46, 0, Math.PI * 0.6),
+        dmat,
+      );
       hood.position.set(0, 1.69, -0.02);
-      hood.rotation.y = Math.PI;
+      hood.rotation.y = Math.PI / 2;
       // …and falling over the shoulders and down the back
       const back = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.95, 1, 3), dmat);
       back.position.set(0, 1.18, -0.23);
